@@ -11,8 +11,9 @@
     ryoku = {
       url = "github:aethctl/Ryoku-on-NixOS/main";
     };
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nvf.url = "github:notashelf/nvf";
+    # Era-matched to the pinned nixpkgs (nvf master now needs pnpm_12 which
+    # does not exist in that rev).
+    nvf.url = "github:notashelf/nvf/45ad22485d23";
     nvf.inputs.nixpkgs.follows = "nixpkgs";
   };
 

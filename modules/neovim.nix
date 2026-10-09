@@ -7,7 +7,7 @@
 
     settings = {
       imports = [
-        ../../nvf/nvf.nix
+        ../nvf/nvf.nix
       ];
     };
   };

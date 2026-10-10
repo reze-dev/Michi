@@ -21,6 +21,7 @@
     clang-tools        # clangd, clang-tidy
     nodejs
     bun
+    tuios                # terminal window manager
 
     # -- build & task runners -------------------------------------------------
     just

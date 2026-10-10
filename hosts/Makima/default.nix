@@ -7,6 +7,7 @@
     ../../modules/desktop.nix
     ../../modules/neovim.nix
     ../../modules/graphics.nix
+    ../../modules/devtools.nix
   ];
 
   networking.hostName = "Makima";

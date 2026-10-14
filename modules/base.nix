@@ -4,7 +4,11 @@
   nixpkgs.config.allowUnfree = true;
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+      "pipe-operators"
+    ];
     auto-optimise-store = true;
   };
 
@@ -37,12 +41,16 @@
   users.users.reze = {
     isNormalUser = true;
     description = "reze";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
   };
 
   environment.systemPackages = with pkgs; [
     wget
     git
+    openconnect
   ];
 
   fonts.packages = with pkgs; [

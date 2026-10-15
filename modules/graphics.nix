@@ -1,10 +1,34 @@
-{ ... }:
+{ config, lib, ... }:
 
+# Hybrid graphics: AMD iGPU (card1) drives the internal panel, NVIDIA RTX
+# 1650 Ti (card0) is the dGPU. Compositors must render on the iGPU — a mixed
+# atomic commit across the two GPUs hard-freezes the machine.
+#
+# The NVIDIA half came from the old ryoku.nix; it is plain NixOS and survives
+# Ryoku's removal unchanged.
 {
-  # Hybrid graphics: the internal panel (eDP-1) is wired to the amdgpu iGPU
-  # (card1); the NVIDIA dGPU (card0) has no connected outputs. Compositors must
-  # render on the iGPU, otherwise the mixed atomic commit hard-freezes the
-  # machine. niri is additionally pinned via render-drm-device in its user.kdl.
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
+  boot.initrd.kernelModules = lib.mkAfter [ "amdgpu" ];
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = false;
+    open = false;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
+
+  # Pinned for the compositors so they never pick the dGPU as the renderer.
+  # Hyprland (AQ_DRM_DEVICES) and Niri (WLR_DRM_DEVICES) also read these from
+  # their own generated configs, which is what actually decides the render
+  # device — these are the fallback for everything else.
   environment.sessionVariables = {
     AQ_DRM_DEVICES = "/dev/dri/card1"; # hyprland / aquamarine
     WLR_DRM_DEVICES = "/dev/dri/card1"; # wlroots compositors

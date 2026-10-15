@@ -7,7 +7,7 @@
     # rev means two glibcs in one system closure — a mesa built on a newer
     # glibc fails with 'GLIBC_2.43 not found' against Ryoku's libm and every
     # Wayland compositor freezes. Update both together (see docs/nixos.md).
-    nixpkgs.url = "github:NixOS/nixpkgs/56c02bc00adcf003215cc4bd996d6efaf4cff188";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     ryoku = {
       url = "github:aethctl/Ryoku-on-NixOS/main";
     };
@@ -17,7 +17,13 @@
     nvf.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { ryoku, self, nixpkgs, nvf }:
+  outputs =
+    {
+      ryoku,
+      self,
+      nixpkgs,
+      nvf,
+    }:
     let
       system = "x86_64-linux";
     in

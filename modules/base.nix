@@ -16,7 +16,10 @@
     enable = true;
     efiSupport = true;
     device = "nodev";
-    useOSProber = true;
+    # NixOS is the only system on this machine, so there is nothing to probe
+    # for. Leaving this on made every rebuild re-scan every partition (adding
+    # ~20s) and kept resurrecting a stale entry for the old install.
+    useOSProber = false;
   };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;

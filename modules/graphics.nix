@@ -20,18 +20,23 @@
     modesetting.enable = true;
     powerManagement.enable = true;
     powerManagement.finegrained = false;
-    open = false;
+    # The RTX 1650 Ti is Turing. NVIDIA stopped shipping the proprietary kernel
+    # module flavor for Turing-and-newer at driver 590, so open is the only
+    # flavor this card can actually use on `latest`.
+    open = true;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    # `latest` is whichever is newer of `production` and `new_feature` — 615.78.08
+    # (New Feature Branch) as of this nixpkgs rev, vs 595.104.02 for `stable`.
+    # `nvidiaPackages.latest` rather than a pinned branch so `nix flake update`
+    # carries it forward instead of leaving it stuck on an old driver.
+    package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
 
   # Pinned for the compositors so they never pick the dGPU as the renderer.
-  # Hyprland (AQ_DRM_DEVICES) and Niri (WLR_DRM_DEVICES) also read these from
-  # their own generated configs, which is what actually decides the render
-  # device — these are the fallback for everything else.
+  # Niri reads WLR_DRM_DEVICES from its own generated config, which is what
+  # actually decides the render device — this is the fallback for everything else.
   environment.sessionVariables = {
-    AQ_DRM_DEVICES = "/dev/dri/card1"; # hyprland / aquamarine
-    WLR_DRM_DEVICES = "/dev/dri/card1"; # wlroots compositors
+    WLR_DRM_DEVICES = "/dev/dri/card1"; # wlroots compositors (niri)
     __GLX_VENDOR_LIBRARY_NAME = "mesa";
     LIBVA_DRIVER_NAME = "radeonsi";
   };

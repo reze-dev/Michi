@@ -47,6 +47,19 @@
     ];
   };
 
+  # ─── Home Manager ───────────────────────────────────────────────────────
+  # Used as a NixOS module, so the home generation is built and activated as
+  # part of nixos-rebuild rather than by a separate `home-manager switch`.
+  # There is no `enable` option anymore — declaring `users` is what activates it.
+  home-manager = {
+    # Puts the home profile on reze's PATH via users.users.reze.packages.
+    # This is what the old `useUserPkgs` (PATH prepending) was renamed to.
+    useUserPackages = true;
+    users.reze = {
+      imports = [ ./home.nix ];
+    };
+  };
+
   environment.systemPackages = with pkgs; [
     wget
     git

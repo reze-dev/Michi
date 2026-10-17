@@ -58,6 +58,12 @@
       #
       # `background-effect { blur true }` is what turns blur on per-window; the
       # global `blur` block above only sets the parameters.
+      #
+      # `draw-border-with-background false` is essential, not cosmetic: by default
+      # niri draws the border and focus ring as a solid background rectangle
+      # behind the window, which then shows through the transparency. Left on,
+      # the focused pane looked opaque and blue (the focus-ring colour) while
+      # every unfocused pane looked correct.
       _children = [
         {
           window-rule = {
@@ -66,6 +72,7 @@
             match._props.is-focused = true;
             opacity = 0.8;
             background-effect.blur = true;
+            draw-border-with-background = false;
           };
         }
         {
@@ -75,6 +82,7 @@
             match._props.is-focused = false;
             opacity = 0.9;
             background-effect.blur = true;
+            draw-border-with-background = false;
           };
         }
 

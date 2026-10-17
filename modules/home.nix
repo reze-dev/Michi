@@ -6,6 +6,7 @@
 
 {
   imports = [
+    ./fish.nix
     ./kitty.nix
     ./niri.nix
   ];

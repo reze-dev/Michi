@@ -5,7 +5,10 @@
 # alongside the others in modules/.
 
 {
-  imports = [ ./niri.nix ];
+  imports = [
+    ./kitty.nix
+    ./niri.nix
+  ];
 
   home.stateVersion = "26.11";
 }

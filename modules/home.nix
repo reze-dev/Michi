@@ -7,14 +7,14 @@
   home.stateVersion = "26.11";
 
   # ─── Niri ───────────────────────────────────────────────────────────────
-  # The config lives in `settings` as structured options rather than as a
-  # writeText blob, so home-manager generates config.kdl and validates it with
-  # `niri validate` on every build (checkConfig is on by default). A bad
-  # translation fails the rebuild instead of bricking the session.
+  # Based on niri's own default config (`enableDefaultConfig`), so the whole
+  # layout/input/binds/animation surface comes from upstream and stays current
+  # across `nix flake update`. The `settings` below is only what upstream's
+  # default cannot know: this machine's panel and GPU wiring, the session
+  # autostarts, and the blur/transparency treatment.
   #
-  # Note that generated KDL is alphabetically ordered by attribute name and
-  # carries no comments, so the section comments below live here in the Nix
-  # source — this file is the source of truth, not the generated .kdl.
+  # Generated KDL is alphabetically ordered and carries no comments, so the
+  # rationale for these overrides lives here rather than in the .kdl.
   wayland.windowManager.niri = {
     enable = true;
 
@@ -23,21 +23,50 @@
     # don't install a second, user-level portal config on top of it.
     portalPackage = null;
 
-    # Rationale for the two odd-looking bits below, kept here because the
-    # generated file cannot carry comments:
-    #
-    #   eDP-1 is the internal panel (1920x1080@144, 1.25), wired to the AMD
-    #   iGPU (card1). The RTX 1650 Ti (card0) drives no outputs.
-    #
-    #   The compositor must render on the iGPU: a mixed atomic commit across
-    #   card0/card1 hard-freezes this machine. Hardware cursor planes are also
-    #   unreliable across the mixed GPU pair, hence debug.disable-cursor-plane.
+    # Prepend `include "<niri>/resources/default-config.kdl"` to the generated
+    # file. Merges, so the settings below are layered on top of upstream's.
+    enableDefaultConfig = true;
 
     settings = {
-      # ─── Repeated top-level nodes ─────────────────────────────────────────
-      # `output` and `spawn-at-startup` both appear more than once, and Nix
-      # attrsets cannot hold duplicate keys, so they go in a single _children.
+      # ─── GPU wiring ──────────────────────────────────────────────────────
+      # The compositor must render on the iGPU: a mixed atomic commit across
+      # card0/card1 hard-freezes this machine. Hardware cursor planes are also
+      # unreliable across the mixed GPU pair.
+      environment = {
+        WLR_DRM_DEVICES = "/dev/dri/card1";
+        __GLX_VENDOR_LIBRARY_NAME = "mesa";
+        LIBVA_DRIVER_NAME = "radeonsi";
+      };
+
+      debug.disable-cursor-plane = { };
+
+      # ─── Blur ────────────────────────────────────────────────────────────
+      # Global blur tuning. niri's defaults are passes 3 / offset 3 / noise 0.02
+      # / saturation 1.5; bumped slightly for a softer, less noisy result.
+      # Windows still have to opt in via background-effect below.
+      blur = {
+        passes = 3;
+        offset = 4;
+        noise = 0.015;
+        saturation = 1.7;
+      };
+
+      # ─── Transparency ─────────────────────────────────────────────────────
+      # Applied to every window. 0.94 is deliberately subtle — text stays
+      # legible while the wallpaper reads through. Drop to ~0.85 for a more
+      # obvious effect. `background-effect { blur true }` is what turns blur
+      # on per-window; the global `blur` block above only sets the parameters.
       _children = [
+        {
+          window-rule = {
+            opacity = 0.94;
+            background-effect.blur = true;
+          };
+        }
+
+        # ─── Panel ──────────────────────────────────────────────────────────
+        # eDP-1 is the internal panel (1920x1080@144, 1.25), wired to the AMD
+        # iGPU (card1). The RTX 1650 Ti (card0) drives no outputs.
         {
           output = {
             _args = [ "eDP-1" ];
@@ -45,6 +74,11 @@
             scale = 1.25;
           };
         }
+
+        # ─── Autostart ──────────────────────────────────────────────────────
+        # `output`, `spawn-at-startup`, `window-rule` and `binds` all appear
+        # more than once across here and upstream's default, so they go in
+        # _children: Nix attrsets cannot hold duplicate keys.
         {
           spawn-at-startup = [
             "gnome-keyring-daemon"
@@ -55,107 +89,23 @@
         { spawn-at-startup = [ "mako" ]; }
         # Not lib.getExe' — gvfs keeps this one in libexec, not bin.
         { spawn-at-startup = [ "${pkgs.gnome.gvfs}/libexec/gvfs-udisks2-volume-monitor" ]; }
-        # Wallpaper daemon. awww has no config file in 0.12, so it is driven
-        # purely by the client: starting the daemon restores the last wallpaper
-        # from its cache, and `awww img` swaps it at runtime.
+        # awww 0.12 has no config file; starting the daemon restores the last
+        # wallpaper from its cache, and `awww img` swaps it at runtime.
         { spawn-at-startup = [ (lib.getExe' pkgs.awww "awww-daemon") ]; }
-    ];
 
-      # ─── Environment ──────────────────────────────────────────────────────
-      environment = {
-        WLR_DRM_DEVICES = "/dev/dri/card1";
-        __GLX_VENDOR_LIBRARY_NAME = "mesa";
-        LIBVA_DRIVER_NAME = "radeonsi";
-      };
-
-      # ─── Input ────────────────────────────────────────────────────────────
-      input = {
-        keyboard.xkb.layout = "us";
-        touchpad = {
-          tap = { };
-          natural-scroll = { };
-          dwt = { };
-        };
-      };
-
-      # ─── Cursor ───────────────────────────────────────────────────────────
-      cursor = {
-        xcursor-theme = "Bibata-Modern-Ice";
-        xcursor-size = 24;
-      };
-
-      # ─── Layout ───────────────────────────────────────────────────────────
-      layout = {
-        gaps = 16;
-        center-focused-column = "never";
-        always-center-single-column = { };
-        # Repeated `proportion` nodes, so this one needs _children.
-        preset-column-widths._children = [
-          { proportion = 0.33333; }
-          { proportion = 0.5; }
-          { proportion = 0.66667; }
-        ];
-        border = {
-          on = { };
-          width = 4;
-        };
-        focus-ring.off = { };
-      };
-
-      prefer-no-csd = { };
-
-      hotkey-overlay.skip-at-startup = { };
-
-      debug.disable-cursor-plane = { };
-
-      # ─── Keybinds ─────────────────────────────────────────────────────────
-      binds = {
-        "Mod+Return" = { spawn = [ (lib.getExe pkgs.kitty) ]; };
-        "Mod+D" = { spawn = [ (lib.getExe pkgs.fuzzel) ]; };
-        "Mod+E" = { spawn = [ (lib.getExe pkgs.nautilus) ]; };
-        "Mod+Q" = { close-window = { }; };
-        "Mod+Shift+E" = { quit = { }; };
-        "Mod+V" = { toggle-window-floating = { }; };
-      "Mod+F" = { maximize-column = { }; };
-      "Mod+Shift+F" = { fullscreen-window = { }; };
-
-        "Mod+Left" = { focus-column-left = { }; };
-        "Mod+Right" = { focus-column-right = { }; };
-        "Mod+Down" = { focus-window-down = { }; };
-        "Mod+Up" = { focus-window-up = { }; };
-
-        "Mod+Shift+Left" = { move-column-left = { }; };
-        "Mod+Shift+Right" = { move-column-right = { }; };
-        "Mod+Shift+Down" = { move-window-down = { }; };
-        "Mod+Shift+Up" = { move-window-up = { }; };
-
-        "Mod+BracketLeft" = { focus-workspace-down = { }; };
-        "Mod+BracketRight" = { focus-workspace-up = { }; };
-
-        "Mod+1" = { focus-workspace = 1; };
-        "Mod+2" = { focus-workspace = 2; };
-        "Mod+3" = { focus-workspace = 3; };
-        "Mod+4" = { focus-workspace = 4; };
-        "Mod+5" = { focus-workspace = 5; };
-        "Mod+6" = { focus-workspace = 6; };
-        "Mod+7" = { focus-workspace = 7; };
-        "Mod+8" = { focus-workspace = 8; };
-        "Mod+9" = { focus-workspace = 9; };
-
-        "Mod+Shift+1" = { move-column-to-workspace = 1; };
-        "Mod+Shift+2" = { move-column-to-workspace = 2; };
-        "Mod+Shift+3" = { move-column-to-workspace = 3; };
-        "Mod+Shift+4" = { move-column-to-workspace = 4; };
-        "Mod+Shift+5" = { move-column-to-workspace = 5; };
-        "Mod+Shift+6" = { move-column-to-workspace = 6; };
-        "Mod+Shift+7" = { move-column-to-workspace = 7; };
-        "Mod+Shift+8" = { move-column-to-workspace = 8; };
-        "Mod+Shift+9" = { move-column-to-workspace = 9; };
-
-        "Print" = { screenshot = { }; };
-        "Mod+Print" = { screenshot-screen = { }; };
-        "Shift+Print" = { screenshot-window = { }; };
-      };
+        # ─── Keybind overrides ──────────────────────────────────────────────
+        # Upstream's default binds Mod+D to fuzzel, Mod+Q to close-window and
+        # the arrow keys to focus/move columns, so those are left alone —
+        # niri rejects duplicate keybinds outright ("duplicate keybind later
+        # defined here"). These two keys are unbound in the default, which is
+        # how kitty and nautilus keep their old shortcuts.
+        {
+          binds = {
+            "Mod+Return" = { spawn = [ (lib.getExe pkgs.kitty) ]; };
+            "Mod+E" = { spawn = [ (lib.getExe pkgs.nautilus) ]; };
+          };
+        }
+      ];
     };
   };
 }

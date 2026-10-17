@@ -51,14 +51,29 @@
       };
 
       # ─── Transparency ─────────────────────────────────────────────────────
-      # Applied to every window. 0.94 is deliberately subtle — text stays
-      # legible while the wallpaper reads through. Drop to ~0.85 for a more
-      # obvious effect. `background-effect { blur true }` is what turns blur
-      # on per-window; the global `blur` block above only sets the parameters.
+      # Two rules instead of one catch-all, keyed on focus state: the focused
+      # pane is more transparent (0.8) so the wallpaper shows through most
+      # where you are actually working, and unfocused panes sit back at 0.9 so
+      # they stay legible in the background.
+      #
+      # `background-effect { blur true }` is what turns blur on per-window; the
+      # global `blur` block above only sets the parameters.
       _children = [
         {
           window-rule = {
-            opacity = 0.94;
+            # _props, not a plain attr: `match` takes its conditions as
+            # properties (`match is-focused=true`), not child nodes.
+            match._props.is-focused = true;
+            opacity = 0.8;
+            background-effect.blur = true;
+          };
+        }
+        {
+          window-rule = {
+            # _props, not a plain attr: `match` takes its conditions as
+            # properties (`match is-focused=false`), not child nodes.
+            match._props.is-focused = false;
+            opacity = 0.9;
             background-effect.blur = true;
           };
         }

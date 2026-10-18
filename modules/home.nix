@@ -9,6 +9,7 @@
 {
   imports = [
     ./fish.nix
+    ./gtk.nix
     ./kitty.nix
     ./niri.nix
   ];

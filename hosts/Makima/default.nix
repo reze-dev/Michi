@@ -8,6 +8,7 @@
     ../../modules/neovim.nix
     ../../modules/graphics.nix
     ../../modules/devtools.nix
+    ../../modules/polkit.nix
     ../../modules/storage.nix
   ];
 

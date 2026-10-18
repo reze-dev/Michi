@@ -7,22 +7,20 @@
   programs.kitty = {
     enable = true;
 
-    # Family name is "VictorMono Nerd Font" — no space between "Victor" and
-    # "Mono". That is what nerd-fonts.victor-mono registers (alias
-    # "VictorMono NF"), so a spaced-out name silently falls back to another
-    # font. Size is in points.
+    # Maple Mono ships one family per weight, exactly like the Victor Mono Nerd
+    # Font it replaced, so the heavier face is selected by name:
     #
-    # Weight: this face is static, so `font_features +weight=...` would not
-    # work — that is an OpenType variation axis, not an OpenType feature.
-    # Instead each weight is registered as its own family, and we select the
-    # heavier one directly:
+    #   fc-match "Maple Mono SemiBold" -> MapleMono-SemiBold.ttf "SemiBold"
     #
-    #   fc-match "VictorMono NF SemiBold" -> VictorMonoNerdFont-SemiBold.ttf
+    # Alternatives: "Maple Mono Medium", "Maple Mono Light", or plain
+    # "Maple Mono" for Regular. Bold text still uses the family's own Bold
+    # face.
     #
-    # Swap to "VictorMono NF Medium" or "VictorMono Nerd Font" (Regular) to
-    # tune it. Bold text still uses the family's own Bold face.
+    # Note `font.name` cannot carry a style: home-manager's font submodule
+    # requires `name`, so an extra font_family in extraConfig would come
+    # *after* this one and never win.
     font = {
-      name = "VictorMono NF SemiBold";
+      name = "Maple Mono SemiBold";
       size = 13;
     };
 

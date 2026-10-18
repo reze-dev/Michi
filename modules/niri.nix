@@ -120,11 +120,13 @@
         # the arrow keys to focus/move columns, so those are left alone —
         # niri rejects duplicate keybinds outright ("duplicate keybind later
         # defined here"). These two keys are unbound in the default, which is
-        # how kitty and nautilus keep their old shortcuts.
+        # how kitty and nautilus keep their old shortcuts. Mod+A was free and is
+        # gnome-text-editor, for quick edits to config files.
         {
           binds = {
             "Mod+Return" = { spawn = [ (lib.getExe pkgs.kitty) ]; };
             "Mod+E" = { spawn = [ (lib.getExe pkgs.nautilus) ]; };
+            "Mod+A" = { spawn = [ (lib.getExe pkgs.gnome-text-editor) ]; };
           };
         }
       ];

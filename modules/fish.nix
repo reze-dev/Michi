@@ -3,14 +3,48 @@
 # Enabling `programs.fish` puts fish on PATH, which is also what makes the
 # `shell = "fish"` in kitty.nix (and the shell integrations there) actually
 # work — fish was not installed anywhere before this.
-{ pkgs, ... }:
+{ config, pkgs, ... }:
+
+# Rosé Pine's official fish theme, pinned by rev. Vendored rather than fetched
+# at runtime: fish reads themes from ~/.config/fish/themes/*.theme (per
+# fish-doc), so dropping the file there lets `fish_config theme choose` find
+# it locally instead of downloading on every shell start.
+let
+  rose-pine-fish = pkgs.fetchFromGitHub {
+    owner = "rose-pine";
+    repo = "fish";
+    rev = "127a990e5ad4688118c950123787fb0686afa4c8";
+    sha256 = "3heI6nhItw5WfKGQT1FRQKfv+lONyn+DzwYjYqJjzLE=";
+  };
+in
 {
-  # Search and pager tooling. fd and ripgrep back the fzf widgets below.
+  xdg.configFile."fish/themes/Rosé Pine Auto.theme".source =
+    "${rose-pine-fish}/themes/Rosé Pine Auto.theme";
+
+  # ─── Search tooling ──────────────────────────────────────────────────────
+  # fd and ripgrep back the fzf widgets below. eza comes from programs.eza.
   home.packages = with pkgs; [
     fd
     ripgrep
-    # Used by fzf's Alt+C directory preview.
-    eza
+  ];
+
+  # ─── Environment ─────────────────────────────────────────────────────────
+  home.sessionVariables = {
+    COLORTERM = "truecolor";
+    # Empty log format keeps direnv silent instead of printing a diff every
+    # time an environment loads.
+    DIRENV_LOG_FORMAT = "";
+    GOPATH = "${config.home.homeDirectory}/go";
+    # col comes from util-linux, which is already in the system profile.
+    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    MANROFFOPT = "-c";
+  };
+
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/go/bin"
+    "$HOME/.config/emacs/bin"
+    "$HOME/.local/share/coursier/bin"
   ];
 
   # ─── Colourised man pages ────────────────────────────────────────────────
@@ -19,9 +53,13 @@
     config.theme = "base16";
   };
 
-  home.sessionVariables = {
-    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
-    MANROFFOPT = "-c";
+  # ─── eza ─────────────────────────────────────────────────────────────────
+  # enableFishIntegration sets up ls/ll/la/tree aliases.
+  programs.eza = {
+    enable = true;
+    enableFishIntegration = true;
+    icons = "auto";
+    git = true;
   };
 
   # ─── fzf ─────────────────────────────────────────────────────────────────
@@ -31,7 +69,8 @@
 
     defaultCommand = "fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
 
-    # Ctrl-T: files, with a bat preview.
+    # Ctrl-T: files, with a bat preview. The flat fileWidgetCommand /
+    # fileWidgetOptions names were renamed upstream; they now nest.
     fileWidget = {
       command = "fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
       options = [
@@ -46,6 +85,30 @@
         "--preview 'eza --tree --color=always --icons=always {} | head -200'"
       ];
     };
+  };
+
+  # ─── zoxide ──────────────────────────────────────────────────────────────
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+    options = [ "--cmd cd" ];
+  };
+
+  # ─── direnv ──────────────────────────────────────────────────────────────
+  programs.direnv = {
+    enable = true;
+    enableFishIntegration = true;
+    # Caches nix environments so loading them is instant.
+    nix-direnv.enable = true;
+  };
+
+  # ─── starship ────────────────────────────────────────────────────────────
+  # enableTransience is what makes the prompt disappear during long-running
+  # commands, and what calls starship_transient_prompt_func below.
+  programs.starship = {
+    enable = true;
+    enableFishIntegration = true;
+    enableTransience = true;
   };
 
   # ─── nix-index ───────────────────────────────────────────────────────────
@@ -66,13 +129,11 @@
       { name = "done"; src = done.src; }
     ];
 
-    # NOTE: `fish_config theme choose` downloads the theme from the fish-shell
-    # themes repo on the first run of each shell, so it needs the network and
-    # will fail on a cold/offline start. Home-manager has no fish `themes`
-    # option, so there is no nix-managed alternative in-tree; if that becomes
-    # annoying the theme can be vendored into xdg.configFile instead.
     interactiveShellInit = ''
+      # Disable greeting in memory (avoids disk writes on every startup)
       set -g fish_greeting
+
+      # Resolved from the vendored file above, so no network needed.
       fish_config theme choose "Rosé Pine Auto"
 
       # Keep sponge from deleting failed commands immediately until session ends
@@ -80,8 +141,7 @@
     '';
 
     functions = {
-      # Only takes effect once starship is installed *and* `starship init fish`
-      # is added to interactiveShellInit — neither is true yet.
+      # Called by starship's transient prompt (programs.starship.enableTransience).
       starship_transient_prompt_func = "starship module character";
 
       # mkdir and cd in one step.
@@ -93,6 +153,15 @@
       bak = ''
         cp -r $argv[1] "$argv[1].bak"
       '';
+    };
+
+    shellAliases = {
+      cat = "bat";
+      # Custom eza flags not covered by programs.eza.
+      lo = "eza -l -o --icons=auto";
+      # NOTE: tmux is not installed on this system, so this alias only works
+      # once it is. Use `command tmux` if you would rather it stay quiet.
+      tmux = "tmux -u";
     };
 
     shellAbbrs = {
@@ -110,6 +179,8 @@
 
       # Nix
       nrs = "sudo nixos-rebuild switch --flake .";
+      # NOTE: Home Manager is a NixOS module here, so standalone
+      # `home-manager switch` does not apply — `nrs` is the one that works.
       hms = "home-manager switch --flake .";
       ns = "nix-shell -p";
     };

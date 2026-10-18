@@ -4,6 +4,8 @@
 # This file is the aggregator only — each concern lives in its own module
 # alongside the others in modules/.
 
+{ pkgs, ... }:
+
 {
   imports = [
     ./fish.nix
@@ -12,4 +14,10 @@
   ];
 
   home.stateVersion = "26.11";
+
+  # User packages with no home-manager module of their own.
+  home.packages = with pkgs; [
+    # For the `tmux -u` alias in fish.nix.
+    tmux
+  ];
 }

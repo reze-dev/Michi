@@ -14,7 +14,9 @@
 
   boot.initrd.kernelModules = lib.mkAfter [ "amdgpu" ];
 
-  services.xserver.videoDrivers = [ "nvidia" ];
+  # No services.xserver.videoDrivers here: services.xserver is off (Wayland
+  # only), so nothing reads that list. Xwayland picks up the NVIDIA userspace
+  # bits from hardware.nvidia on its own.
 
   hardware.nvidia = {
     modesetting.enable = true;

@@ -43,7 +43,6 @@ in
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/go/bin"
-    "$HOME/.config/emacs/bin"
     "$HOME/.local/share/coursier/bin"
   ];
 
@@ -159,8 +158,6 @@ in
       cat = "bat";
       # Custom eza flags not covered by programs.eza.
       lo = "eza -l -o --icons=auto";
-      # NOTE: tmux is not installed on this system, so this alias only works
-      # once it is. Use `command tmux` if you would rather it stay quiet.
       tmux = "tmux -u";
     };
 
@@ -179,9 +176,9 @@ in
 
       # Nix
       nrs = "sudo nixos-rebuild switch --flake .";
-      # NOTE: Home Manager is a NixOS module here, so standalone
-      # `home-manager switch` does not apply — `nrs` is the one that works.
-      hms = "home-manager switch --flake .";
+      # Home Manager is a NixOS module here, so there is no standalone
+      # `home-manager switch` generation — this points at the same rebuild.
+      hms = "sudo nixos-rebuild switch --flake .";
       ns = "nix-shell -p";
     };
   };

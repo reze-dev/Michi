@@ -48,6 +48,14 @@
       "networkmanager"
       "wheel"
     ];
+    # yescrypt hash. A normal user with no password gets `!` written to shadow
+    # on activation, which locks the account — SDDM autologin is off, so there
+    # would be no way back in.
+    #
+    # The leading `$` is required: MCF format is `$y$j9T$<salt>$<hash>`. NixOS
+    # validates this at eval time and warns "you will be locked out" without it,
+    # because crypt(3) would not recognise a bare `y$...` prefix.
+    hashedPassword = "$y$j9T$IY3QCh0ea6uFa8BgcmH4O/$wttU6G89UruBt8kDIIlsyb5tjDmtFr38rAbMc0rQKf0";
   };
 
   # ─── Home Manager ───────────────────────────────────────────────────────
@@ -68,6 +76,10 @@
     git
     openconnect
   ];
+
+  # Set system-wide rather than only in home-manager's session variables, so
+  # GUI apps launched outside that environment also get truecolor.
+  environment.variables.COLORTERM = "truecolor";
 
   fonts.packages = with pkgs; [
     inter

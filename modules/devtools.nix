@@ -36,9 +36,5 @@
 
     # -- editors / ides (unfree: allowUnfree is enabled in base.nix) ----------
     jetbrains.idea
-
-    # -- shell integration ----------------------------------------------------
-    direnv
-    nix-direnv
   ];
 }

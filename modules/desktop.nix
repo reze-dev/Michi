@@ -22,7 +22,8 @@
   };
 
   environment.systemPackages = with pkgs; [
-    kitty
+    # kitty and tmux are intentionally absent: kitty is owned by
+    # programs.kitty in home.nix, and tmux by home.packages in home.nix.
     fuzzel
     mako
     nautilus

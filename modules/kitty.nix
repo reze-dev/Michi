@@ -7,21 +7,18 @@
   programs.kitty = {
     enable = true;
 
-    # Maple Mono ships one family per weight, exactly like the Victor Mono Nerd
-    # Font it replaced, so the heavier face is selected by name:
-    #
-    #   fc-match "Maple Mono SemiBold" -> MapleMono-SemiBold.ttf "SemiBold"
-    #
-    # Alternatives: "Maple Mono Medium", "Maple Mono Light", or plain
-    # "Maple Mono" for Regular. Bold text still uses the family's own Bold
-    # face.
+    # Plain "Maple Mono" resolves to MapleMono-Regular.ttf. Its heavier weights
+    # are available as their own families if you want them later —
+    # "Maple Mono Medium", "Maple Mono SemiBold", "Maple Mono Bold" — but the
+    # default weight is fine here; only Victor Mono's Regular was thin enough
+    # to warrant bumping.
     #
     # Note `font.name` cannot carry a style: home-manager's font submodule
     # requires `name`, so an extra font_family in extraConfig would come
     # *after* this one and never win.
     font = {
-      name = "Maple Mono SemiBold";
-      size = 13;
+      name = "Maple Mono";
+      size = 14;
     };
 
     # A kitty-themes theme name, without the .conf suffix.

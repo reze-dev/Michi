@@ -88,7 +88,6 @@
     nerd-fonts.jetbrains-mono
     nerd-fonts.recursive-mono
     nerd-fonts.symbols-only
-    nerd-fonts.victor-mono
   ];
 
   system.stateVersion = "26.11";

@@ -11,8 +11,18 @@
     # "Mono". That is what nerd-fonts.victor-mono registers (alias
     # "VictorMono NF"), so a spaced-out name silently falls back to another
     # font. Size is in points.
+    #
+    # Weight: this face is static, so `font_features +weight=...` would not
+    # work — that is an OpenType variation axis, not an OpenType feature.
+    # Instead each weight is registered as its own family, and we select the
+    # heavier one directly:
+    #
+    #   fc-match "VictorMono NF SemiBold" -> VictorMonoNerdFont-SemiBold.ttf
+    #
+    # Swap to "VictorMono NF Medium" or "VictorMono Nerd Font" (Regular) to
+    # tune it. Bold text still uses the family's own Bold face.
     font = {
-      name = "VictorMono Nerd Font";
+      name = "VictorMono NF SemiBold";
       size = 13;
     };
 

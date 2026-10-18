@@ -37,6 +37,18 @@
         name = "JsonConceal";
         clear = true;
       }
+      {
+        name = "NoAutoComment";
+        clear = true;
+      }
+      {
+        name = "TermSettings";
+        clear = true;
+      }
+      {
+        name = "BigFile";
+        clear = true;
+      }
     ];
 
     autocmds = [
@@ -204,6 +216,64 @@
         '';
         desc = "Disable conceal for json files";
       }
+
+      # Don't auto-continue comments with o/O or Enter
+      {
+        event = [ "FileType" ];
+        group = "NoAutoComment";
+        pattern = [ "*" ];
+        callback = lib.mkLuaInline ''
+          function()
+            vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+          end
+        '';
+        desc = "Stop comment continuation on o/O/Enter";
+      }
+
+      # Terminal buffers: no line numbers, drop straight into insert
+      {
+        event = [ "TermOpen" ];
+        group = "TermSettings";
+        callback = lib.mkLuaInline ''
+          function()
+            vim.opt_local.number = false
+            vim.opt_local.relativenumber = false
+            vim.opt_local.signcolumn = "no"
+            vim.cmd("startinsert")
+          end
+        '';
+        desc = "Terminal buffer settings";
+      }
+
+      # Files over 1MiB drop treesitter folding and other heavy work.
+      {
+        event = [ "BufReadPre" ];
+        group = "BigFile";
+        callback = lib.mkLuaInline ''
+          function(event)
+            local ok, stat = pcall(vim.uv.fs_stat, event.match)
+            if ok and stat and stat.size and stat.size > 1024 * 1024 then
+              vim.b[event.buf].bigfile = true
+              vim.opt_local.foldmethod = "manual"
+              vim.opt_local.foldexpr = "0"
+              vim.opt_local.spell = false
+              vim.b[event.buf].illuminate_disabled = true
+            end
+          end
+        '';
+        desc = "Disable treesitter folding on large files";
+      }
     ];
+
+    # Neovim's runtime detects compose files as plain yaml, but the compose
+    # language service targets `yaml.docker-compose`.
+    luaConfigRC.filetype_overrides = ''
+      vim.filetype.add({
+        pattern = {
+          ["docker%-compose.*%.ya?ml"] = "yaml.docker-compose",
+          ["compose.*%.ya?ml"] = "yaml.docker-compose",
+        },
+      })
+    '';
   };
 }

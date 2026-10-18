@@ -256,5 +256,47 @@
       lua = true;
       desc = "Open Lazy plugin manager / Nix info";
     }
+
+    # ─── Ported from the standalone nvim config ─────────────────────────────
+    # <leader>qq sits under the existing <leader>q prefix; timeoutlen already
+    # covers the gap.
+    {
+      key = "<leader>qq";
+      mode = "n";
+      action = "<cmd>q<cr>";
+      desc = "Quit window";
+    }
+    {
+      key = "<leader>|";
+      mode = "n";
+      action = "<cmd>vsplit<cr>";
+      desc = "Vertical split";
+    }
+    {
+      key = "<leader>-";
+      mode = "n";
+      action = "<cmd>split<cr>";
+      desc = "Horizontal split";
+    }
+    {
+      key = "<leader>wd";
+      mode = "n";
+      action = "<cmd>close<cr>";
+      desc = "Close window";
+    }
+    {
+      key = "<leader><C-a>";
+      mode = "n";
+      action = "ggVG";
+      desc = "Select all";
+    }
+    # <Esc> also clears the search highlight in normal mode. Drop this block
+    # if it fights you — <leader>nh covers the same thing explicitly.
+    {
+      key = "<Esc>";
+      mode = "n";
+      action = "<cmd>nohlsearch<cr>";
+      desc = "Clear search highlights";
+    }
   ];
 }

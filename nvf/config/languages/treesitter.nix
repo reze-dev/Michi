@@ -2,6 +2,9 @@
   config.vim = {
     treesitter = {
       enable = true;
+      # Bundles the tree-sitter CLI (wrapped with gcc on PATH) so
+      # TSUpdateSync and custom parser compilation work.
+      vendorCLI = true;
       autotagHtml = true;
       context.enable = false;
       textobjects = {

@@ -54,7 +54,22 @@
       # Search & CLI Utilities
       ripgrep # rg (drives the Snacks picker grep sources)
       fd # fd (used by Telescope previously; kept for fzf habits)
-      fzf # fzf
+
+      # Runtime deps the config calls directly
+      # lazygit: visuals.nix binds <leader>gg and <leader>gl to
+      #   Snacks.lazygit() / Snacks.lazygit.log(), which shell out to it.
+      lazygit
+      # graphviz: rust-analyzer draws inheritance/type MROs on "goto type
+      # definition" and renders nothing without it.
+      graphviz
+
+      # NOT here, to avoid duplicating what home-manager already puts on PATH:
+      #   fzf    -> modules/fish.nix programs.fzf
+      #   bat    -> modules/fish.nix programs.bat
+      #   zoxide -> modules/fish.nix programs.zoxide (a shell tool, not an
+      #             editor dependency)
+      # fd and ripgrep appear in both places; the nvf copies guarantee them
+      # for :! and DAP launches even with a non-HM editor.
     ];
 
     # Enable native DAP presets

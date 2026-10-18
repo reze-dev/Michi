@@ -39,6 +39,14 @@
 
       debug.disable-cursor-plane = { };
 
+      # Pointer. The theme name has to match the fontconfig rule in gtk.nix and
+      # the package in desktop.nix; niri alone cannot resolve it if the theme
+      # files are missing, which is why the package is declared at all.
+      cursor = {
+        xcursor-theme = "Bibata-Modern-Ice";
+        xcursor-size = 24;
+      };
+
       # ─── Chrome ───────────────────────────────────────────────────────────
       # What reads as a "border" here is the focus ring — upstream leaves the
       # always-visible `border` off and only draws the ring, 4px wide in

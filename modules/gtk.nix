@@ -31,4 +31,28 @@ in
       package = pkgs.yaru-theme;
     };
   };
+
+  # Written straight into ~/.config/fontconfig/conf.d/ rather than through
+  # home-manager's `fontconfig` module, which is not enabled here — turning it
+  # on would make home-manager own $FONTCONFIG_PATH and shadow the system
+  # fontconfig that NixOS sets up in base.nix. fontconfig reads
+  # $XDG_CONFIG_HOME/fontconfig/conf.d/ on its own, so this works without that.
+  #
+  # The theme files themselves come from desktop.nix's systemPackages entry —
+  # fonts.packages would not do, since cursor lookup walks XDG_DATA_DIRS/icons
+  # rather than fontconfig <dir> entries.
+  xdg.configFile."fontconfig/conf.d/60-bibata-cursor.conf".text = ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+    <fontconfig>
+      <match target="pattern">
+        <test qual="any" name="family">
+          <string>cursor</string>
+        </test>
+        <edit name="family" mode="assign" binding="same">
+          <string>Bibata-Modern-Ice</string>
+        </edit>
+      </match>
+    </fontconfig>
+  '';
 }

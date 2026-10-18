@@ -33,6 +33,12 @@
     # Media player. `playerctl` above is what exposes MPRIS metadata to
     # keybinders and status bars; mpv itself is the player.
     mpv
+    # Cursor theme. Deliberately a systemPackage rather than a fonts.packages
+    # entry: fonts.packages only feeds fontconfig <dir> entries, but cursor
+    # lookup walks XDG_DATA_DIRS/icons. As a systemPackage this lands in
+    # sw/share/icons/Bibata-Modern-Ice, where niri and every Xcursor client
+    # can actually find it.
+    bibata-cursors
     # Wallpaper daemon. Started from niri's spawn-at-startup (modules/home.nix);
     # by default it restores the last wallpaper from its cache on start.
     awww

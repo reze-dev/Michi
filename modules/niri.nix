@@ -39,6 +39,12 @@
 
       debug.disable-cursor-plane = { };
 
+      # ─── Chrome ───────────────────────────────────────────────────────────
+      # What reads as a "border" here is the focus ring — upstream leaves the
+      # always-visible `border` off and only draws the ring, 4px wide in
+      # #7fc8ff. Thin it to 2px. Merges with the default's layout block.
+      layout.focus-ring.width = 2;
+
       # ─── Blur ────────────────────────────────────────────────────────────
       # Global blur tuning. niri's defaults are passes 3 / offset 3 / noise 0.02
       # / saturation 1.5; bumped slightly for a softer, less noisy result.
@@ -65,6 +71,18 @@
       # the focused pane looked opaque and blue (the focus-ring colour) while
       # every unfocused pane looked correct.
       _children = [
+        # ─── Rounded corners ─────────────────────────────────────────────────
+        # Upstream ships this as a commented-out example, so nothing rounds by
+        # default. clip-to-geometry is the part that matters: without it niri
+        # knows the radius for the blur shape but leaves the window content
+        # itself square, so the corners still look sharp.
+        {
+          window-rule = {
+            geometry-corner-radius = 10;
+            clip-to-geometry = true;
+          };
+        }
+
         {
           window-rule = {
             # _props, not a plain attr: `match` takes its conditions as

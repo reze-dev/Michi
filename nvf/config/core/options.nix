@@ -17,7 +17,7 @@
       shiftwidth = 2;
       softtabstop = 2;
       expandtab = true;
-      smartindent = true;
+
       autoindent = true;
       breakindent = true;
       ignorecase = true;
@@ -65,7 +65,30 @@
         "menuone"
         "noselect"
       ];
+
+      # Adopted from the standalone nvim config.
+      #
+      # smartindent off: treesitter and filetype indent already own
+      # indentation, and smartindent fights them — it reindents on operators
+      # that treesitter has already handled.
+      smartindent = false;
+      # Round indent to the shiftwidth multiple.
+      shiftround = true;
+      # ripgrep drives every grep-style plugin here.
+      grepprg = "rg --vimgrep";
+      grepformat = "%f:%l:%c:%m";
+
+      # NOT ported: winborder = "rounded". dressing-nvim already draws float
+      # borders, so setting both double-draws every float.
     };
+
+    # diffopt/sessionoptions need :append semantics to keep Vim's defaults,
+    # and config.vim.options assigns wholesale — hardcoding the defaults here
+    # would rot on the next Neovim bump. Two appends earn their Lua.
+    luaConfigRC.core_opt_appends = ''
+      vim.opt.diffopt:append("linematch:60")
+      vim.opt.sessionoptions:append("globals")
+    '';
 
     luaConfigRC.core_opt_extras = ''
       vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }

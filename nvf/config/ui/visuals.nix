@@ -90,7 +90,7 @@
             "dashboard"
             "snacks_dashboard"
             "lazy"
-            "TelescopePrompt"
+            "SnacksPickerList"
           ];
         };
       };
@@ -99,6 +99,40 @@
     utility.snacks-nvim = {
       enable = true;
       setupOpts = {
+        # Picks up the explorer/input/scope/lazygit frontends that the
+        # dashboard and the <leader>E / <leader>gg bindings below expect.
+        explorer = {
+          enabled = true;
+        };
+        input.enable = true;
+        scope.enable = true;
+        lazygit.enable = true;
+        quickfile.enable = true;
+
+        # Replaces telescope. picker.enabled is implied, set explicitly so the
+        # dependency on it is visible rather than incidental.
+        picker = {
+          enabled = true;
+          win = {
+            input = {
+              border = "rounded";
+            };
+            list = {
+              border = "rounded";
+            };
+            preview = {
+              border = "rounded";
+            };
+          };
+        };
+
+        # noice.nvim + nvim-notify already own vim.notify; leaving snacks'
+        # notifier on gives two frontends fighting over it.
+        notifier.enable = false;
+
+        # vim-illuminate owns the word under the cursor.
+        words.enable = false;
+
         dashboard = {
           enabled = true;
           preset = {
@@ -107,7 +141,7 @@
                 icon = " ";
                 key = "f";
                 desc = "Find File";
-                action = ":lua Snacks.dashboard.pick('files')";
+                action = ":lua Snacks.picker.files()";
               }
               {
                 icon = " ";
@@ -119,13 +153,13 @@
                 icon = "󰱼 ";
                 key = "g";
                 desc = "Find Text";
-                action = ":lua Snacks.dashboard.pick('live_grep')";
+                action = ":lua Snacks.picker.grep()";
               }
               {
                 icon = " ";
                 key = "r";
                 desc = "Recent Files";
-                action = ":lua Snacks.dashboard.pick('oldfiles')";
+                action = ":lua Snacks.picker.recent()";
               }
               {
                 icon = " ";
@@ -137,7 +171,7 @@
                 icon = " ";
                 key = "c";
                 desc = "Config";
-                action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})";
+                action = ":lua Snacks.picker.files({cwd = vim.fn.stdpath('config')})";
               }
               {
                 icon = " ";

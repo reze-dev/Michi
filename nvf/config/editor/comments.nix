@@ -136,16 +136,22 @@
         lua = true;
         desc = "Previous TODO";
       }
+      # grep-by-pattern rather than a todo-comments picker source: these were
+      # TodoTelescope before, and a content search works the same regardless of
+      # whether todo-comments registers a Snacks source at all. Jumping between
+      # hits still goes through todo-comments' own jump_next/jump_prev above.
       {
         key = "<leader>ft";
         mode = "n";
-        action = "<cmd>TodoTelescope<cr>";
+        action = "function() Snacks.picker.grep({ search = 'TODO' }) end";
+        lua = true;
         desc = "Find TODOs";
       }
       {
         key = "<leader>fT";
         mode = "n";
-        action = "<cmd>TodoTelescope keywords=TODO,FIX,FIXME<cr>";
+        action = "function() Snacks.picker.grep({ search = 'TODO|FIX|FIXME' }) end";
+        lua = true;
         desc = "Find TODO/FIX/FIXME";
       }
     ];

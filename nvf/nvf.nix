@@ -24,7 +24,7 @@
 
     # Tools
     ./config/tools/tooling.nix
-    ./config/tools/telescope.nix
+    ./config/tools/picker.nix
     ./config/tools/navigation.nix
     ./config/tools/git.nix
     ./config/tools/debugger.nix

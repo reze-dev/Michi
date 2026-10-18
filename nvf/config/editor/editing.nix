@@ -16,7 +16,7 @@
           java = false;
         };
         disable_filetype = [
-          "TelescopePrompt"
+          "SnacksPickerList"
           "spectre_panel"
         ];
         fast_wrap = {

@@ -52,8 +52,8 @@
       cargo # cargo
 
       # Search & CLI Utilities
-      ripgrep # rg (used by Telescope)
-      fd # fd (used by Telescope)
+      ripgrep # rg (drives the Snacks picker grep sources)
+      fd # fd (used by Telescope previously; kept for fzf habits)
       fzf # fzf
     ];
 

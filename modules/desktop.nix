@@ -30,6 +30,9 @@
     wl-clipboard
     brightnessctl
     playerctl
+    # Media player. `playerctl` above is what exposes MPRIS metadata to
+    # keybinders and status bars; mpv itself is the player.
+    mpv
     # Wallpaper daemon. Started from niri's spawn-at-startup (modules/home.nix);
     # by default it restores the last wallpaper from its cache on start.
     awww

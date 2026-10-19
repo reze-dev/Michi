@@ -1,4 +1,4 @@
-{ ... }: {
+{ lib, ... }: {
   config.vim = {
     autocomplete = {
       nvim-cmp.enable = false;
@@ -101,17 +101,16 @@
               winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None";
               draw = {
                 treesitter = [ "lsp" ];
-                columns = [
-                  [ "kind_icon" ]
-                  [
-                    "label"
-                    "label_description"
-                    {
-                      gap = 1;
-                    }
-                  ]
-                  [ "source_name" ]
-                ];
+                # Each column is a table of components with an optional `gap`
+                # key; a Nix list cannot express the mixed array/key form, so
+                # emit the Lua directly.
+                columns = lib.mkLuaInline ''
+                  {
+                    { "kind_icon" },
+                    { "label", "label_description", gap = 1 },
+                    { "source_name" },
+                  }
+                '';
               };
             };
             documentation = {

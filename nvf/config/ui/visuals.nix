@@ -180,12 +180,6 @@
                 action = ":lua Snacks.picker.files({cwd = vim.fn.stdpath('config')})";
               }
               {
-                icon = lib.mkLuaInline ''"\u{F12E} "'';
-                key = "L";
-                desc = "Lazy";
-                action = ":Lazy";
-              }
-              {
                 icon = lib.mkLuaInline ''"\u{F011} "'';
                 key = "q";
                 desc = "Quit";
@@ -217,11 +211,8 @@
               section = "header";
               padding = 2;
             }
-            {
-              pane = 1;
-              section = "startup";
-              padding = 1;
-            }
+            # The "startup" section is lazy.nvim-specific: it calls
+            # require("lazy.stats"), which does not exist under nvf's lz-n.
             {
               pane = 2;
               section = "keys";

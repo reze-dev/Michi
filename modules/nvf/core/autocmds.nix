@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.autocmds = { lib, ... }: {
+  michi.nvfModules.autocmds = { lib, ... }: {
   config.vim = {
     augroups = [
       {

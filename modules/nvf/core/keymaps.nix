@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.keymaps = { ... }: {
+  michi.nvfModules.keymaps = { ... }: {
   config.vim.keymaps = [
     # Better escape
     {

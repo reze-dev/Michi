@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.testing = { pkgs, ... }: {
+  michi.nvfModules.testing = { pkgs, ... }: {
   config.vim = {
     extraPlugins = with pkgs.vimPlugins; {
       neotest = {

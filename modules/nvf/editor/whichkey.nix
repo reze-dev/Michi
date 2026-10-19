@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.whichkey = { lib, ... }: {
+  michi.nvfModules.whichkey = { lib, ... }: {
   config.vim = {
     binds.whichKey = {
       enable = true;

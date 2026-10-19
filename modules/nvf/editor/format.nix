@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.format = { pkgs, lib, ... }: {
+  michi.nvfModules.format = { pkgs, lib, ... }: {
   config.vim = {
     formatter.conform-nvim = {
       enable = true;

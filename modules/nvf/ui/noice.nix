@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.noice = { ... }: {
+  michi.nvfModules.noice = { ... }: {
   config.vim = {
     ui.noice = {
       enable = true;

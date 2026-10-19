@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.navigation = { pkgs, lib, ... }: {
+  michi.nvfModules.navigation = { pkgs, lib, ... }: {
   config.vim = {
     utility.oil-nvim = {
       enable = true;

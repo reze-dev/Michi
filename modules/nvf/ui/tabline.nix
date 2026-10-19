@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.tabline = { lib, ... }: {
+  michi.nvfModules.tabline = { lib, ... }: {
   config.vim = {
     tabline.nvimBufferline = {
       enable = true;

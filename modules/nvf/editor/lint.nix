@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.lint = { pkgs, lib, ... }: {
+  michi.nvfModules.lint = { pkgs, lib, ... }: {
   config.vim = {
     diagnostics = {
       presets = {

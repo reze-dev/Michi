@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.languages = { pkgs, lib, ... }: {
+  michi.nvfModules.languages = { pkgs, lib, ... }: {
   config.vim = {
     # ─── nvf language modules ──────────────────────────────────────────
     # Only the rust module is enabled, and solely for its rustaceanvim

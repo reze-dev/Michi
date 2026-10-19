@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.lsp = { lib, ... }: {
+  michi.nvfModules.lsp = { lib, ... }: {
   config.vim = {
     lsp = {
       enable = true;

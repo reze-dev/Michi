@@ -1,6 +1,7 @@
 { lib, ... }:
 let
-  mkModuleAttrOption = description:
+  mkModuleAttrOption =
+    description:
     lib.mkOption {
       type = lib.types.lazyAttrsOf lib.types.deferredModule;
       default = { };
@@ -9,8 +10,10 @@ let
 in
 {
   options.flake = {
-    nixosModules = mkModuleAttrOption "Dendritic NixOS modules";
     homeModules = mkModuleAttrOption "Dendritic Home Manager modules";
+  };
+
+  options.michi = {
     nvfModules = mkModuleAttrOption "Dendritic nvf Neovim modules";
   };
 }

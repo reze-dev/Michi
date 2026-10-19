@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.globals = { ... }: {
+  michi.nvfModules.globals = { ... }: {
   config.vim.globals = {
     mapleader = " ";
     maplocalleader = " ";

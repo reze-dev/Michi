@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.treesitter = { pkgs, ... }: {
+  michi.nvfModules.treesitter = { pkgs, ... }: {
   config.vim = {
     treesitter = {
       enable = true;

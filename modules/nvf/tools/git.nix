@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.git = { lib, ... }: {
+  michi.nvfModules.git = { lib, ... }: {
   config.vim = {
     git.gitsigns = {
       enable = true;

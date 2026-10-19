@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.picker = { pkgs, lib, ... }: {
+  michi.nvfModules.picker = { pkgs, lib, ... }: {
   config.vim = {
     # Telescope is fully retired in favour of Snacks' picker: one picker for
     # files, grep, buffers, symbols and git, and it drops plenary + fzf-native

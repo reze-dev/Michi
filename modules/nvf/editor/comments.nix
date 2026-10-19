@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.comments = { lib, ... }: {
+  michi.nvfModules.comments = { lib, ... }: {
   config.vim = {
     # NOTE: the standalone config has no comment plugin — builtin gc/gb
     # commenting is used as-is. Only todo-comments is ported here.

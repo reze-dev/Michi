@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.visuals = { lib, ... }: {
+  michi.nvfModules.visuals = { lib, ... }: {
   config.vim = {
     visuals = {
       nvim-web-devicons.enable = true;

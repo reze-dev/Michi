@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.theme = { pkgs, ... }: {
+  michi.nvfModules.theme = { pkgs, ... }: {
   config.vim = {
     extraPlugins = with pkgs.vimPlugins; {
       base46 = {

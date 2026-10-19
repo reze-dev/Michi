@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.completion = { lib, ... }: {
+  michi.nvfModules.completion = { lib, ... }: {
   config.vim = {
     autocomplete = {
       nvim-cmp.enable = false;

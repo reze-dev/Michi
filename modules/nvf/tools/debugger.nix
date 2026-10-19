@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.debugger = { pkgs, ... }: let
+  michi.nvfModules.debugger = { pkgs, ... }: let
   pythonWithDebugpy = pkgs.python3.withPackages (ps: [ ps.debugpy ]);
 in {
   config.vim = {

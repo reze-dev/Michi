@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.statusline = { ... }: {
+  michi.nvfModules.statusline = { ... }: {
   config.vim = {
     statusline.lualine.enable = true;
 

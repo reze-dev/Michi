@@ -1,4 +1,4 @@
-{ inputs, self, ... }:
+{ inputs, config, ... }:
 {
   flake.nixosModules.neovim = {
     imports = [
@@ -10,7 +10,7 @@
       defaultEditor = true;
 
       settings = {
-        imports = builtins.attrValues self.nvfModules;
+        imports = builtins.attrValues config.michi.nvfModules;
       };
     };
   };

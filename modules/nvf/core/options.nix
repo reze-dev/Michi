@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.options = { pkgs, lib, ... }: {
+  michi.nvfModules.options = { pkgs, lib, ... }: {
   config.vim = {
     # nvf sources its config through $VIMINIT while the command-line buffers
     # already exist. `:syntax on` (nvf's basic module) calls `filetype on`

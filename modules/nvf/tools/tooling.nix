@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.tooling = { pkgs, ... }: {
+  michi.nvfModules.tooling = { pkgs, ... }: {
   config.vim = {
     # Declarative external developer tools via Nix
     # Eliminates any dependency on Mason / mason-tool-installer

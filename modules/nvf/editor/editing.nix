@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.nvfModules.editing = { pkgs, lib, ... }: {
+  michi.nvfModules.editing = { pkgs, lib, ... }: {
   config.vim = {
     autopairs.nvim-autopairs = {
       enable = true;

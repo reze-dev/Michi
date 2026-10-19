@@ -7,8 +7,8 @@
           mode = "buffers";
           themable = true;
           numbers = "none";
-          close_command = "bdelete! %d";
-          right_mouse_command = "bdelete! %d";
+          close_command = "bdelete %d";
+          right_mouse_command = "bdelete %d";
           left_mouse_command = "buffer %d";
           middle_mouse_command = null;
           indicator = {
@@ -16,7 +16,7 @@
             style = "icon";
           };
           buffer_close_icon = "󰅖";
-          modified_icon = "";
+          modified_icon = "●";
           close_icon = "";
           left_trunc_marker = "";
           right_trunc_marker = "";
@@ -28,8 +28,13 @@
           diagnostics_update_in_insert = false;
           diagnostics_indicator = lib.mkLuaInline ''
             function(count, level)
-              local icon = level:match("error") and " " or " "
-              return " " .. icon .. count
+              local icons = {
+                error = "\u{F057}",
+                warning = "\u{F071}",
+                info = "\u{F06A}",
+                hint = "\u{F0335}",
+              }
+              return (icons[level] or icons.info) .. count
             end
           '';
           offsets = [
@@ -50,7 +55,7 @@
           persist_buffer_sort = true;
           separator_style = "thin";
           enforce_regular_tabs = false;
-          always_show_bufferline = true;
+          always_show_bufferline = false;
           hover = {
             enabled = true;
             delay = 200;
@@ -84,18 +89,6 @@
         mode = "n";
         action = "<cmd>BufferLineCloseLeft<cr>";
         desc = "Close buffers to the left";
-      }
-      {
-        key = "<S-h>";
-        mode = "n";
-        action = "<cmd>BufferLineCyclePrev<cr>";
-        desc = "Previous buffer";
-      }
-      {
-        key = "<S-l>";
-        mode = "n";
-        action = "<cmd>BufferLineCycleNext<cr>";
-        desc = "Next buffer";
       }
       {
         key = "[b";

@@ -9,15 +9,14 @@
       gopls # gopls
       basedpyright # basedpyright
       lua-language-server # lua-language-server
-      nil # nil (Nix LSP)
-      marksman # marksman (Markdown LSP)
-      bash-language-server # bash-language-server
-      dockerfile-language-server # dockerfile-language-server
+      typescript-language-server # tsserver
       vscode-langservers-extracted # html, cssls, jsonls
-      yaml-language-server # yaml-language-server
+      yaml-language-server # yamlls
+      dockerfile-language-server # dockerls
+      docker-compose-language-service # docker_compose_language_service
+      terraform-ls # terraformls
       taplo # taplo (TOML LSP & formatter)
-      sqls # sqls (SQL LSP)
-      superhtml # superhtml
+      zls # zls
 
       # Formatters
       rustfmt # rustfmt
@@ -28,18 +27,18 @@
       prettier # prettier
       nixfmt # nixfmt (Nix RFC style)
       shfmt # shfmt
-      gersemi # gersemi (CMake formatter)
-      sqlfluff # sqlfluff (SQL formatter/linter)
       fish # fish_indent
 
       # Linters
       golangci-lint # golangci-lint
+      yamllint # yamllint
+      hadolint # hadolint
+      tflint # tflint
+      terraform # terraform fmt
 
       # Debuggers & DAP Adapters
       vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb
-      lldb # lldb, lldb-dap
       delve # dlv
-      python3Packages.debugpy # debugpy
 
       # Go Ecosystem Tooling
       go # go compiler & toolchain
@@ -53,7 +52,7 @@
 
       # Search & CLI Utilities
       ripgrep # rg (drives the Snacks picker grep sources)
-      fd # fd (used by Telescope previously; kept for fzf habits)
+      fd # fd
 
       # Runtime deps the config calls directly
       # lazygit: visuals.nix binds <leader>gg and <leader>gl to
@@ -62,20 +61,6 @@
       # graphviz: rust-analyzer draws inheritance/type MROs on "goto type
       # definition" and renders nothing without it.
       graphviz
-
-      # NOT here, to avoid duplicating what home-manager already puts on PATH:
-      #   fzf    -> modules/fish.nix programs.fzf
-      #   bat    -> modules/fish.nix programs.bat
-      #   zoxide -> modules/fish.nix programs.zoxide (a shell tool, not an
-      #             editor dependency)
-      # fd and ripgrep appear in both places; the nvf copies guarantee them
-      # for :! and DAP launches even with a non-HM editor.
     ];
-
-    # Enable native DAP presets
-    debugger.nvim-dap.presets = {
-      codelldb.enable = true;
-      debugpy.enable = true;
-    };
   };
 }

@@ -114,6 +114,14 @@
 
     navigation.harpoon = {
       enable = true;
+      mappings = {
+        # The 1..5 file selectors are defined in the keymaps below, not by
+        # nvf's defaults (<C-j>/<C-k>/<C-l>/<C-;> would shadow tmux navigator).
+        file1 = null;
+        file2 = null;
+        file3 = null;
+        file4 = null;
+      };
       setupOpts = {
         settings = {
           save_on_toggle = true;
@@ -128,14 +136,23 @@
     };
 
     utility.motion = {
-      flash-nvim.enable = true;
+      # nvf would bind s/S in normal mode, where mini.surround owns the `s`
+      # prefix; the source config binds them in x/o only (see keymaps below).
+      flash-nvim = {
+        enable = true;
+        mappings = {
+          jump = null;
+          treesitter = null;
+          remote = null;
+          treesitter_search = null;
+          toggle = null;
+        };
+      };
       precognition = {
         enable = true;
         setupOpts = {
-          startVisible = true;
+          startVisible = false;
           showBlankVirtLine = true;
-          highlightColor.link = "DiagnosticSignWarn";
-          targetedMotionHighlightColor.link = "DiagnosticSignInfo";
         };
       };
     };
@@ -150,19 +167,19 @@
           "netrw"
           "NvimTree"
           "lazy"
+          "mason"
           "oil"
           "snacks_dashboard"
+          "snacks_picker_input"
+          "snacks_picker_list"
           "dashboard"
           "trouble"
           "harpoon"
           "help"
           "undotree"
-          "dapui_scopes"
-          "dapui_breakpoints"
-          "dapui_stacks"
-          "dapui_watches"
+          "dap-view"
+          "dap-view-term"
           "dap-repl"
-          "dapui_console"
         ];
         disabled_buftypes = [
           "nofile"
@@ -177,16 +194,12 @@
       vim-tmux-navigator = {
         package = vim-tmux-navigator;
       };
-      nvim-spider = {
-        package = nvim-spider;
-      };
     };
 
     globals = {
       tmux_navigator_no_mappings = 1;
       tmux_navigator_save_on_switch = 2;
       tmux_navigator_disable_when_zoomed = 1;
-      tmux_navigator_preserve_zoom = 1;
     };
 
     keymaps = [
@@ -273,7 +286,6 @@
       {
         key = "s";
         mode = [
-          "n"
           "x"
           "o"
         ];
@@ -284,7 +296,6 @@
       {
         key = "S";
         mode = [
-          "n"
           "x"
           "o"
         ];
@@ -357,52 +368,6 @@
         mode = "n";
         action = "<cmd>TmuxNavigateRight<cr>";
         desc = "Navigate right (tmux-aware)";
-      }
-
-      # Spider
-      {
-        key = "w";
-        mode = [
-          "n"
-          "o"
-          "x"
-        ];
-        action = "function() require('spider').motion('w') end";
-        lua = true;
-        desc = "Spider-w";
-      }
-      {
-        key = "e";
-        mode = [
-          "n"
-          "o"
-          "x"
-        ];
-        action = "function() require('spider').motion('e') end";
-        lua = true;
-        desc = "Spider-e";
-      }
-      {
-        key = "b";
-        mode = [
-          "n"
-          "o"
-          "x"
-        ];
-        action = "function() require('spider').motion('b') end";
-        lua = true;
-        desc = "Spider-b";
-      }
-      {
-        key = "ge";
-        mode = [
-          "n"
-          "o"
-          "x"
-        ];
-        action = "function() require('spider').motion('ge') end";
-        lua = true;
-        desc = "Spider-ge";
       }
     ];
   };

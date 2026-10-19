@@ -5,6 +5,17 @@
       blink-cmp = {
         enable = true;
         friendly-snippets.enable = true;
+        # nvf would otherwise inject its own <C-Space>/<CR>/<Tab>/… keymaps;
+        # the standalone config defines the full table itself, so silence them.
+        mappings = {
+          complete = null;
+          confirm = null;
+          next = null;
+          previous = null;
+          close = null;
+          scrollDocsUp = null;
+          scrollDocsDown = null;
+        };
         setupOpts = {
           keymap = {
             preset = "default";
@@ -46,8 +57,39 @@
             ];
           };
           appearance = {
+            use_nvim_cmp_as_default = false;
             nerd_font_variant = "mono";
+            kind_icons = {
+              Text = "󰉿";
+              Method = "󰊕";
+              Function = "󰊕";
+              Constructor = "󰒓";
+              Field = "󰜢";
+              Variable = "󰆦";
+              Property = "󰖷";
+              Class = "󱡠";
+              Interface = "󱡠";
+              Struct = "󱡠";
+              Module = "󰅩";
+              Unit = "󰪚";
+              Value = "󰦨";
+              Enum = "󰦨";
+              EnumMember = "󰦨";
+              Keyword = "󰻾";
+              Constant = "󰏿";
+              Snippet = "󱄽";
+              Color = "󰏘";
+              File = "󰈔";
+              Reference = "󰬲";
+              Folder = "󰉋";
+              Event = "󱐋";
+              Operator = "󰪚";
+              TypeParameter = "󰬛";
+            };
           };
+          # sources.default is nvf-managed and already equals
+          # [ "lsp" "path" "snippets" "buffer" ]; do not redefine it or the
+          # list would be concatenated twice.
           completion = {
             accept = {
               auto_brackets = {
@@ -57,6 +99,20 @@
             menu = {
               border = "rounded";
               winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None";
+              draw = {
+                treesitter = [ "lsp" ];
+                columns = [
+                  [ "kind_icon" ]
+                  [
+                    "label"
+                    "label_description"
+                    {
+                      gap = 1;
+                    }
+                  ]
+                  [ "source_name" ]
+                ];
+              };
             };
             documentation = {
               auto_show = true;

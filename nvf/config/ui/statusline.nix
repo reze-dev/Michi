@@ -6,11 +6,14 @@
       local lualine = require("lualine")
 
       local function hl(group, attr, fallback)
-        local ok, value = pcall(vim.api.nvim_get_hl, 0, { name = group, link = true })
+        local ok, value = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
         if not ok or not value[attr] then
           return fallback
         end
-        return string.format("#%06x", value[attr])
+        if type(value[attr]) == "number" then
+          return string.format("#%06x", value[attr])
+        end
+        return value[attr]
       end
 
       local function base46_palette()
@@ -35,10 +38,14 @@
         return theme.base_30 or {}, theme.base_16 or {}
       end
 
+      local cached_colors = nil
       local function colors()
+        if cached_colors then
+          return cached_colors
+        end
         local base30, base16 = base46_palette()
         if base30 then
-          return {
+          cached_colors = {
             bg = base30.statusline_bg or base30.black or base16.base00 or "#202328",
             fg = base30.white or base16.base05 or "#bbc2cf",
             muted = base30.grey_fg or base16.base03 or "#5c6370",
@@ -51,9 +58,10 @@
             blue = base30.blue or base30.nord_blue or base16.base0D or "#51afef",
             red = base30.red or base16.base08 or "#ec5f67",
           }
+          return cached_colors
         end
 
-        return {
+        cached_colors = {
           bg = hl("StatusLine", "bg", hl("Normal", "bg", "#202328")),
           fg = hl("StatusLine", "fg", hl("Normal", "fg", "#bbc2cf")),
           muted = hl("Comment", "fg", "#5c6370"),
@@ -66,6 +74,11 @@
           blue = hl("Function", "fg", "#51afef"),
           red = hl("DiagnosticError", "fg", "#ec5f67"),
         }
+        return cached_colors
+      end
+
+      local function invalidate_colors()
+        cached_colors = nil
       end
 
       local conditions = {
@@ -76,9 +89,15 @@
           return vim.fn.winwidth(0) > 80
         end,
         check_git_workspace = function()
-          local filepath = vim.fn.expand("%:p:h")
-          local gitdir = vim.fn.finddir(".git", filepath .. ";")
-          return gitdir and #gitdir > 0 and #gitdir < #filepath
+          local buf = vim.api.nvim_get_current_buf()
+          if vim.bo[buf].buftype ~= "" then
+            return false
+          end
+          local path = vim.api.nvim_buf_get_name(buf)
+          if path == "" then
+            return false
+          end
+          return vim.fs.find(".git", { upward = true, path = vim.fs.dirname(path) })[1] ~= nil
         end,
       }
 
@@ -121,18 +140,25 @@
         return mode_colors[vim.fn.mode()] or c.red
       end
 
-      local function lsp_name()
-        local clients = vim.lsp.get_clients({ bufnr = 0 })
-        if #clients == 0 then
-          return "No Active Lsp"
-        end
+        local function lsp_name()
+          local clients = vim.lsp.get_clients({ bufnr = 0 })
+          if #clients == 0 then
+            return "No Active Lsp"
+          end
 
-        local names = {}
-        for _, client in ipairs(clients) do
-          names[#names + 1] = client.name
+          if #clients == 1 then
+            return clients[1].name
+          end
+          local names = {}
+          for i, client in ipairs(clients) do
+            if i > 3 then
+              names[#names + 1] = "+" .. (#clients - 3)
+              break
+            end
+            names[#names + 1] = client.name
+          end
+          return table.concat(names, ", ")
         end
-        return table.concat(names, ", ")
-      end
 
       local function setup_eviline()
         local c = colors()
@@ -142,14 +168,14 @@
             section_separators = "",
             globalstatus = true,
             disabled_filetypes = {
-              statusline = { "dashboard", "snacks_dashboard", "lazy" },
+              statusline = { "dashboard", "snacks_dashboard", "lazy", "mason" },
             },
             theme = {
               normal = { c = { fg = c.fg, bg = c.bg } },
               inactive = { c = { fg = c.fg, bg = c.bg } },
             },
             refresh = {
-              statusline = 100,
+              statusline = 1000,
             },
           },
           sections = {
@@ -208,7 +234,7 @@
           "filename",
           cond = conditions.buffer_not_empty,
           color = { fg = c.magenta, gui = "bold" },
-          symbols = { modified = " ", readonly = " 󰌾", unnamed = "[No Name]", newfile = "[New]" },
+          symbols = { modified = " ●", readonly = " 󰌾", unnamed = "[No Name]", newfile = "[New]" },
         })
 
         ins_left({ "location", color = { fg = c.blue, gui = "bold" } })
@@ -288,7 +314,10 @@
       setup_eviline()
       vim.api.nvim_create_autocmd("ColorScheme", {
         group = vim.api.nvim_create_augroup("EvilineThemeRefresh", { clear = true }),
-        callback = setup_eviline,
+        callback = function()
+          invalidate_colors()
+          setup_eviline()
+        end,
       })
     '';
   };

@@ -16,16 +16,10 @@
       desc = "Save file";
     }
     {
-      key = "<leader>q";
-      mode = "n";
-      action = "<cmd>q<cr>";
-      desc = "Quit";
-    }
-    {
       key = "<leader>Q";
       mode = "n";
-      action = "<cmd>qa!<cr>";
-      desc = "Force quit all";
+      action = "<cmd>confirm qa<cr>";
+      desc = "Quit all (confirm)";
     }
 
     # Clear search highlights
@@ -36,31 +30,8 @@
       desc = "Clear search highlights";
     }
 
-    # Better window navigation (overridden by tmux-navigator when in tmux)
-    {
-      key = "<C-h>";
-      mode = "n";
-      action = "<C-w>h";
-      desc = "Move to left window";
-    }
-    {
-      key = "<C-j>";
-      mode = "n";
-      action = "<C-w>j";
-      desc = "Move to lower window";
-    }
-    {
-      key = "<C-k>";
-      mode = "n";
-      action = "<C-w>k";
-      desc = "Move to upper window";
-    }
-    {
-      key = "<C-l>";
-      mode = "n";
-      action = "<C-w>l";
-      desc = "Move to right window";
-    }
+    # Better window navigation: vim-tmux-navigator owns <C-h/j/k/l>
+    # (see tools/navigation.nix); only terminal mode is mapped here.
 
     # Resize windows with arrows
     {
@@ -226,26 +197,34 @@
       desc = "Exit terminal mode";
     }
 
-    # Quickfix navigation
+    # Quickfix navigation (lua: pcall guards empty lists, then centers)
     {
       key = "]q";
       mode = "n";
-      action = "<cmd>cnext<cr>zz";
+      action = ''
+        function()
+          local ok = pcall(vim.cmd, "cnext")
+          if ok then
+            vim.cmd("normal! zz")
+          end
+        end
+      '';
+      lua = true;
       desc = "Next quickfix item";
     }
     {
       key = "[q";
       mode = "n";
-      action = "<cmd>cprev<cr>zz";
+      action = ''
+        function()
+          local ok = pcall(vim.cmd, "cprev")
+          if ok then
+            vim.cmd("normal! zz")
+          end
+        end
+      '';
+      lua = true;
       desc = "Previous quickfix item";
-    }
-
-    # Select all
-    {
-      key = "<C-a>";
-      mode = "n";
-      action = "gg<S-v>G";
-      desc = "Select all";
     }
 
     # Package manager / configuration info

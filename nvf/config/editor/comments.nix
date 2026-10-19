@@ -1,43 +1,7 @@
-{ pkgs, lib, ... }: {
+{ lib, ... }: {
   config.vim = {
-    comments.comment-nvim = {
-      enable = true;
-      setupOpts = {
-        padding = true;
-        sticky = true;
-        ignore = "^$";
-        toggler = {
-          line = "gcc";
-          block = "gbc";
-        };
-        opleader = {
-          line = "gc";
-          block = "gb";
-        };
-        extra = {
-          above = "gcO";
-          below = "gco";
-          eol = "gcA";
-        };
-        mappings = {
-          basic = true;
-          extra = true;
-        };
-        pre_hook = lib.mkLuaInline ''
-          function()
-            local ok_hook, ts_hook = pcall(require, "ts_context_commentstring.integrations.comment_nvim")
-            return ok_hook and ts_hook.create_pre_hook() or nil
-          end
-        '';
-      };
-    };
-
-    extraPlugins = with pkgs.vimPlugins; {
-      nvim-ts-context-commentstring = {
-        package = nvim-ts-context-commentstring;
-        setup = "require('ts_context_commentstring').setup({ enable_autocmd = false })";
-      };
-    };
+    # NOTE: the standalone config has no comment plugin — builtin gc/gb
+    # commenting is used as-is. Only todo-comments is ported here.
 
     notes.todo-comments = {
       enable = true;
@@ -46,7 +10,7 @@
         sign_priority = 8;
         keywords = {
           FIX = {
-            icon = " ";
+            icon = lib.mkLuaInline ''"\u{F188}"'';
             color = "error";
             alt = [
               "FIXME"
@@ -56,15 +20,15 @@
             ];
           };
           TODO = {
-            icon = " ";
+            icon = lib.mkLuaInline ''"\u{F00C}"'';
             color = "info";
           };
           HACK = {
-            icon = " ";
+            icon = lib.mkLuaInline ''"\u{F490}"'';
             color = "warning";
           };
           WARN = {
-            icon = " ";
+            icon = lib.mkLuaInline ''"\u{F071}"'';
             color = "warning";
             alt = [
               "WARNING"
@@ -72,7 +36,7 @@
             ];
           };
           PERF = {
-            icon = "󰅒 ";
+            icon = "";
             alt = [
               "OPTIM"
               "PERFORMANCE"
@@ -80,12 +44,12 @@
             ];
           };
           NOTE = {
-            icon = "󰍨 ";
+            icon = lib.mkLuaInline ''"\u{F0368}"'';
             color = "hint";
             alt = [ "INFO" ];
           };
           TEST = {
-            icon = "󰙨 ";
+            icon = "⏲ ";
             color = "test";
             alt = [
               "TESTING"
@@ -136,23 +100,17 @@
         lua = true;
         desc = "Previous TODO";
       }
-      # grep-by-pattern rather than a todo-comments picker source: these were
-      # TodoTelescope before, and a content search works the same regardless of
-      # whether todo-comments registers a Snacks source at all. Jumping between
-      # hits still goes through todo-comments' own jump_next/jump_prev above.
       {
         key = "<leader>ft";
         mode = "n";
-        action = "function() Snacks.picker.grep({ search = 'TODO' }) end";
-        lua = true;
-        desc = "Find TODOs";
+        action = "<cmd>TodoTrouble<cr>";
+        desc = "Find TODOs (Trouble)";
       }
       {
         key = "<leader>fT";
         mode = "n";
-        action = "function() Snacks.picker.grep({ search = 'TODO|FIX|FIXME' }) end";
-        lua = true;
-        desc = "Find TODO/FIX/FIXME";
+        action = "<cmd>TodoQuickFix keywords=TODO,FIX,FIXME<cr>";
+        desc = "Find TODO/FIX/FIXME (quickfix)";
       }
     ];
   };

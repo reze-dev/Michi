@@ -4,29 +4,25 @@
       neotest = {
         package = neotest;
       };
-      neotest-go = {
-        package = neotest-go;
-      };
-      neotest-rust = {
-        package = neotest-rust;
-      };
-      neotest-gtest = {
-        package = neotest-gtest;
-      };
       neotest-golang = {
         package = neotest-golang;
       };
-      fixcursorhold-nvim = {
-        package = FixCursorHold-nvim;
+      neotest-gtest = {
+        package = neotest-gtest;
       };
     };
 
     luaConfigRC.neotest_setup = ''
       local ok_neotest, neotest = pcall(require, "neotest")
       if ok_neotest then
+        -- Adapters: rustaceanvim (Rust), neotest-golang (Go), neotest-gtest (C++)
         local adapters = {}
 
-        -- Go Adapter
+        local ok_rust, rustacean_neotest = pcall(require, "rustaceanvim.neotest")
+        if ok_rust then
+          table.insert(adapters, rustacean_neotest)
+        end
+
         local ok_golang, neotest_golang = pcall(require, "neotest-golang")
         if ok_golang then
           table.insert(
@@ -34,40 +30,10 @@
             neotest_golang({
               runner = "go",
               go_test_args = { "-v", "-race", "-count=1" },
-              dap_go_opts = {},
             })
           )
-        else
-          local ok_go, neotest_go = pcall(require, "neotest-go")
-          if ok_go then
-            table.insert(
-              adapters,
-              neotest_go({
-                experimental = { test_table = true },
-                args = { "-race", "-v", "-count=1" },
-              })
-            )
-          end
         end
 
-        -- Rust Adapter
-        local ok_rustacean, rustacean_neotest = pcall(require, "rustaceanvim.neotest")
-        if ok_rustacean then
-          table.insert(adapters, rustacean_neotest)
-        else
-          local ok_rust, neotest_rust = pcall(require, "neotest-rust")
-          if ok_rust then
-            table.insert(
-              adapters,
-              neotest_rust({
-                args = { "--no-capture" },
-                dap_adapter = "codelldb",
-              })
-            )
-          end
-        end
-
-        -- C++ Adapter
         local ok_gtest, neotest_gtest = pcall(require, "neotest-gtest")
         if ok_gtest then
           if type(neotest_gtest) == "function" then

@@ -1,11 +1,50 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   config.vim = {
-    # System Environment & PATH fallback
+    # nvf sources its config through $VIMINIT while the command-line buffers
+    # already exist. `:syntax on` (nvf's basic module) calls `filetype on`
+    # and then `doautoall filetypedetect BufRead`, which detects those
+    # buffers and fires FileType during the init, long before plugin setups
+    # (e.g. vim.g.rustaceanvim) and the LSP enable autocmds are registered.
+    # Skip detection around `syntax on` and turn it on at the end of the
+    # init; the buffers are read afterwards, so their FileType events fire
+    # at the normal time.
+    luaConfigRC.filetype_deferred = lib.nvim.dag.entryBefore [ "basic" ] ''
+      vim.g.did_load_filetypes = "deferred-until-init-finishes"
+    '';
+    luaConfigRC.filetype_enable = lib.nvim.dag.entryAfter [ "lsp-servers" ] ''
+      if vim.g.did_load_filetypes == "deferred-until-init-finishes" then
+        vim.g.did_load_filetypes = nil
+        vim.cmd("filetype on")
+      end
+    '';
+
+    # System Environment & PATH: prepend Mason bin (~/.local/share/nvim/mason/bin),
+    # ~/go/bin, ~/.cargo/bin and ~/.local/bin when they exist and are not
+    # already in PATH (matches the standalone config's conditional prepend).
     luaConfigRC.env = ''
       local home = vim.env.HOME or vim.fn.expand("~")
+      local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
       local go_bin = home .. "/go/bin"
       local cargo_bin = home .. "/.cargo/bin"
-      vim.env.PATH = go_bin .. ":" .. cargo_bin .. ":" .. (vim.env.PATH or "")
+      local local_bin = home .. "/.local/bin"
+
+      local path_prepend = {}
+      local function maybe_prepend(dir)
+        if dir and dir ~= "" and vim.uv.fs_stat(dir) then
+          if not string.find(vim.env.PATH or "", dir, 1, true) then
+            path_prepend[#path_prepend + 1] = dir
+          end
+        end
+      end
+
+      maybe_prepend(mason_bin)
+      maybe_prepend(go_bin)
+      maybe_prepend(cargo_bin)
+      maybe_prepend(local_bin)
+
+      if #path_prepend > 0 then
+        vim.env.PATH = table.concat(path_prepend, ":") .. ":" .. (vim.env.PATH or "")
+      end
     '';
 
     options = {
@@ -30,6 +69,7 @@
       pumheight = 10;
       pumblend = 10;
       winblend = 0;
+      winborder = "rounded";
       conceallevel = 0;
       cmdheight = 1;
       laststatus = 3;
@@ -51,14 +91,11 @@
       shell = "bash";
       foldmethod = "expr";
       foldexpr = "v:lua.vim.treesitter.foldexpr()";
-      foldlevel = 99;
       foldlevelstart = 99;
-      foldenable = true;
 
       # Migrated from lua_config.nix
       inccommand = "split";
       jumpoptions = "view";
-      virtualedit = "block";
       smoothscroll = true;
       completeopt = [
         "menu"
@@ -77,9 +114,6 @@
       # ripgrep drives every grep-style plugin here.
       grepprg = "rg --vimgrep";
       grepformat = "%f:%l:%c:%m";
-
-      # NOT ported: winborder = "rounded". dressing-nvim already draws float
-      # borders, so setting both double-draws every float.
     };
 
     # diffopt/sessionoptions need :append semantics to keep Vim's defaults,

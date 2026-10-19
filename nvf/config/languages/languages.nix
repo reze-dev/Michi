@@ -1,36 +1,111 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   config.vim = {
-    languages = {
-      enableFormat = true;
-      enableTreesitter = true;
-      enableDAP = true;
-      clang.enable = true;
-      rust = {
+    # ─── nvf language modules ──────────────────────────────────────────
+    # Only the rust module is enabled, and solely for its rustaceanvim
+    # extension. The source config wires every language by hand:
+    #   * servers live in lsp.nix (canonical Neovim 0.11+ names, no
+    #     nvf presets — those use different names, e.g. `lua-language-server`
+    #     instead of `lua_ls`, which would start duplicate clients),
+    #   * formatting is owned by conform (editor/format.nix),
+    #   * DAP is owned by tools/debugger.nix,
+    #   * grammars are listed in treesitter.nix.
+    languages.rust = {
+      enable = true;
+      lsp.enable = false;
+      format.enable = false;
+      dap.enable = false;
+      treesitter.enable = false;
+
+      extensions.rustaceanvim = {
         enable = true;
-        lsp.enable = false;
-        dap.enable = false;
-        extensions = {
-          rustaceanvim.enable = true;
-          crates-nvim.enable = true;
+        # The setup is a faithful port of the source `vim.g.rustaceanvim`.
+        # `dap` is left at the nvf default, which is the same codelldb
+        # adapter the source auto-detected, but wired to the nixpkgs
+        # package. nvf renders this as a function (rustaceanvim >= 6 API).
+        setupOpts = {
+          tools = {
+            hover_actions.replace_builtin_hover = false;
+            float_win_config.border = "rounded";
+          };
+          server = {
+            # rustaceanvim does not pick the command up from
+            # vim.lsp.config, so it is set explicitly (nvf default).
+            cmd = [ (lib.getExe pkgs.rust-analyzer) ];
+            # `capabilities` is the local blink.cmp-backed table created
+            # in pluginRC.lsp-setup.
+            capabilities = lib.mkLuaInline "capabilities";
+            on_attach = lib.mkLuaInline ''
+              function(client, bufnr)
+                -- Common LSP keymaps are handled by the LspAttach autocommand in lsp.nix.
+                -- Here we only add Rust-specific keymaps
+                local map = function(keys, func, desc)
+                  vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "Rust: " .. desc })
+                end
+
+                map("<leader>re", "<cmd>RustLsp expandMacro<cr>", "Expand macro")
+                map("<leader>rc", "<cmd>RustLsp openCargo<cr>", "Open Cargo.toml")
+                map("<leader>rp", "<cmd>RustLsp parentModule<cr>", "Parent module")
+                map("<leader>rd", "<cmd>RustLsp renderDiagnostic<cr>", "Render diagnostic")
+                map("<leader>rr", "<cmd>RustLsp runnables<cr>", "Runnables")
+                map("<leader>rt", "<cmd>RustLsp testables<cr>", "Testables")
+                map("<leader>rm", "<cmd>RustLsp rebuildProcMacros<cr>", "Rebuild proc macros")
+                map("<leader>rk", "<cmd>RustLsp moveItem up<cr>", "Move item up")
+                map("<leader>rj", "<cmd>RustLsp moveItem down<cr>", "Move item down")
+                map("<leader>ra", "<cmd>RustLsp codeAction<cr>", "Code action (rust)")
+                map("<leader>rh", "<cmd>RustLsp hover actions<cr>", "Hover actions")
+                map("<leader>rJ", "<cmd>RustLsp joinLines<cr>", "Join lines (Rust)")
+
+                -- Debugging
+                map("<leader>rD", "<cmd>RustLsp debuggables<cr>", "Debuggables")
+              end
+            '';
+            default_settings = {
+              "rust-analyzer" = {
+                cargo = {
+                  allFeatures = true;
+                  loadOutDirsFromCheck = true;
+                  buildScripts = { enable = true; };
+                };
+                check = {
+                  enable = true;
+                  command = "clippy";
+                  extraArgs = [ "--no-deps" ];
+                };
+                procMacro = {
+                  enable = true;
+                  ignored = {
+                    "async-trait" = [ "async_trait" ];
+                    "napi-derive" = [ "napi" ];
+                    "async-recursion" = [ "async_recursion" ];
+                  };
+                };
+                inlayHints = {
+                  bindingModeHints = { enable = false; };
+                  chainingHints = { enable = true; };
+                  closingBraceHints = {
+                    enable = true;
+                    minLines = 25;
+                  };
+                  closureReturnTypeHints = { enable = "with_block"; };
+                  lifetimeElisionHints = { enable = "never"; };
+                  maxLength = 25;
+                  parameterHints = { enable = true; };
+                  reborrowHints = { enable = "never"; };
+                  renderColons = true;
+                  typeHints = {
+                    enable = true;
+                    hideClosureInitialization = false;
+                    hideNamedConstructor = false;
+                  };
+                };
+              };
+            };
+          };
         };
       };
-      go.enable = true;
-      python.enable = true;
-      lua.enable = true;
-      html.enable = true;
-      css.enable = true;
-      typescript.enable = true;
-      markdown.enable = true;
-      nix.enable = true;
-      bash.enable = true;
-      json.enable = true;
-      yaml.enable = true;
-      toml.enable = true;
-      docker.enable = true;
-      cmake.enable = true;
-      sql.enable = true;
     };
 
+    # ─── Plugins the source config loads for languages ─────────────────
     extraPlugins = with pkgs.vimPlugins; {
       clangd_extensions-nvim = {
         package = clangd_extensions-nvim;
@@ -44,216 +119,103 @@
     };
 
     luaConfigRC.language_tools = ''
-      -- Clangd Extensions
-      local ok_clangd, clangd_ext = pcall(require, "clangd_extensions")
-      if ok_clangd then
-        clangd_ext.setup({
-          inlay_hints = {
-            inline = false,
-            only_current_line = false,
-            only_current_line_autocmd = { "CursorHold" },
-            show_parameter_hints = true,
-            parameter_hints_prefix = "<- ",
-            other_hints_prefix = "=> ",
-            max_len_align = false,
-            max_len_align_padding = 1,
-            right_align = false,
-            right_align_padding = 7,
-            highlight = "Comment",
-            priority = 100,
+      -- ─── Clangd Extensions ─────────────────────────────────────────────
+      require("clangd_extensions").setup({
+        ast = {
+          role_icons = {
+            type = "\u{1F123}",
+            declaration = "\u{1F113}",
+            expression = "\u{1F114}",
+            statement = ";",
+            specifier = "\u{1F122}",
+            ["template argument"] = "\u{1F183}",
           },
-          ast = {
-            role_icons = {
-              type = "",
-              declaration = "",
-              expression = "",
-              statement = "",
-              specifier = "",
-              ["template argument"] = "",
-            },
-            kind_icons = {
-              Compound = "",
-              Recovery = "",
-              TranslationUnit = "",
-              PackExpansion = "",
-              TemplateTypeParm = "",
-              TemplateTemplateParm = "",
-              TemplateParamObject = "",
-            },
-            highlights = {
-              detail = "Comment",
-            },
+          kind_icons = {
+            Compound = "\u{1F132}",
+            Recovery = "\u{1F141}",
+            TranslationUnit = "\u{1F144}",
+            PackExpansion = "\u{1F13F}",
+            TemplateTypeParm = "\u{1F143}",
+            TemplateTemplateParm = "\u{1F143}",
+            TemplateParamObject = "\u{1F143}",
           },
-          memory_usage = {
-            border = "rounded",
-          },
-          symbol_info = {
-            border = "rounded",
-          },
-          type_hierarchy = {
-            border = "rounded",
-          },
-        })
-
-        vim.api.nvim_create_autocmd("FileType", {
-          group = vim.api.nvim_create_augroup("ClangdKeymaps", { clear = true }),
-          pattern = { "c", "cpp", "objc", "objcpp", "cuda" },
-          callback = function(event)
-            local map = function(keys, func, desc)
-              vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "Clangd: " .. desc })
-            end
-
-            map("<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>", "Switch source/header")
-            map("<leader>ct", "<cmd>ClangdTypeHierarchy<cr>", "Type hierarchy")
-            map("<leader>cm", "<cmd>ClangdMemoryUsage<cr>", "Memory usage")
-            map("<leader>cs", "<cmd>ClangdSymbolInfo<cr>", "Symbol info")
-            map("<leader>cA", "<cmd>ClangdAST<cr>", "View AST")
-          end,
-        })
-      end
-
-      -- Go.nvim
-      local ok_go, gonvim = pcall(require, "go")
-      if ok_go then
-        gonvim.setup({
-          lsp_cfg = false,
-          lsp_on_attach = false,
-          gofmt = "gofumpt",
-          goimports = "gopls",
-          linter = "golangci-lint",
-          test_runner = "go",
-          run_in_floaterm = true,
-          floaterm = {
-            position = "bottom",
-            width = 0.98,
-            height = 0.35,
-          },
-          dap_debug = true,
-          dap_debug_gui = true,
-          tag_transform = "snakecase",
-          tag_options = "json=omitempty",
-          verbose = false,
-          log_path = vim.fn.stdpath("cache") .. "/gonvim.log",
-          icons = { breakpoint = "", currentpos = "" },
-        })
-
-        vim.api.nvim_create_autocmd("FileType", {
-          pattern = { "go" },
-          callback = function(event)
-            local map = function(keys, func, desc)
-              vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "Go: " .. desc })
-            end
-
-            map("<leader>Gt", "<cmd>GoTest<cr>", "Run tests")
-            map("<leader>Gf", "<cmd>GoTestFunc<cr>", "Test function")
-            map("<leader>Gc", "<cmd>GoCoverage<cr>", "Toggle coverage")
-            map("<leader>Ga", "<cmd>GoAddTag<cr>", "Add struct tags")
-            map("<leader>Gr", "<cmd>GoRmTag<cr>", "Remove struct tags")
-            map("<leader>Gi", "<cmd>GoImpl<cr>", "Implement interface")
-            map("<leader>Ge", "<cmd>GoIfErr<cr>", "Generate if err")
-            map("<leader>Gd", "<cmd>GoDebug<cr>", "Start debugger")
-            map("<leader>GD", "<cmd>GoDebug -s<cr>", "Stop debugger")
-            map("<leader>Gl", "<cmd>GoLint<cr>", "Lint")
-            map("<leader>Gv", "<cmd>GoVet<cr>", "Vet")
-            map("<leader>Gg", "<cmd>GoGenerate<cr>", "Go generate")
-            map("<leader>Gm", "<cmd>GoModTidy<cr>", "Go mod tidy")
-          end,
-        })
-      end
-
-      -- Rustaceanvim
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      local ok_blink, blink = pcall(require, "blink.cmp")
-      if ok_blink then
-        capabilities = blink.get_lsp_capabilities(capabilities)
-      end
-
-      vim.g.rustaceanvim = {
-        tools = {
-          hover_actions = {
-            replace_builtin_hover = false,
-          },
-          float_win_config = {
-            border = "rounded",
+          highlights = {
+            detail = "Comment",
           },
         },
-        server = {
-          capabilities = capabilities,
-          on_attach = function(client, bufnr)
-            local map = function(keys, func, desc)
-              vim.keymap.set("n", keys, func, { buffer = bufnr, desc = "Rust: " .. desc })
-            end
-
-            map("<leader>re", "<cmd>RustLsp expandMacro<cr>", "Expand macro")
-            map("<leader>rc", "<cmd>RustLsp openCargo<cr>", "Open Cargo.toml")
-            map("<leader>rp", "<cmd>RustLsp parentModule<cr>", "Parent module")
-            map("<leader>rd", "<cmd>RustLsp renderDiagnostic<cr>", "Render diagnostic")
-            map("<leader>rr", "<cmd>RustLsp runnables<cr>", "Runnables")
-            map("<leader>rt", "<cmd>RustLsp testables<cr>", "Testables")
-            map("<leader>rm", "<cmd>RustLsp rebuildProcMacros<cr>", "Rebuild proc macros")
-            map("<leader>rk", "<cmd>RustLsp moveItem up<cr>", "Move item up")
-            map("<leader>rj", "<cmd>RustLsp moveItem down<cr>", "Move item down")
-            map("<leader>ra", "<cmd>RustLsp codeAction<cr>", "Code action (rust)")
-            map("<leader>rh", "<cmd>RustLsp hover actions<cr>", "Hover actions")
-            map("J", "<cmd>RustLsp joinLines<cr>", "Join lines (Rust)")
-            map("<leader>rD", "<cmd>RustLsp debuggables<cr>", "Debuggables")
-          end,
-          default_settings = {
-            ["rust-analyzer"] = {
-              cargo = {
-                allFeatures = true,
-                loadOutDirsFromCheck = true,
-                buildScripts = { enable = true },
-              },
-              checkOnSave = true,
-              check = {
-                command = "clippy",
-                extraArgs = { "--no-deps" },
-              },
-              procMacro = {
-                enable = true,
-                ignored = {
-                  ["async-trait"] = { "async_trait" },
-                  ["napi-derive"] = { "napi" },
-                  ["async-recursion"] = { "async_recursion" },
-                },
-              },
-              inlayHints = {
-                bindingModeHints = { enable = false },
-                chainingHints = { enable = true },
-                closingBraceHints = { enable = true, minLines = 25 },
-                closureReturnTypeHints = { enable = "with_block" },
-                lifetimeElisionHints = { enable = "never" },
-                maxLength = 25,
-                parameterHints = { enable = true },
-                reborrowHints = { enable = "never" },
-                renderColons = true,
-                typeHints = {
-                  enable = true,
-                  hideClosureInitialization = false,
-                  hideNamedConstructor = false,
-                },
-              },
-            },
-          },
+        memory_usage = {
+          border = "rounded",
         },
-        dap = {
-          adapter = function()
-            local ok_cfg, cfg = pcall(require, "rustaceanvim.config")
-            if not ok_cfg then return nil end
-            local codelldb_path = "${pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter}/bin/codelldb"
-            local liblldb_path = "${pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter}/share/lldb/lib/liblldb.so"
-
-            if vim.fn.filereadable(codelldb_path) == 1 or vim.fn.executable(codelldb_path) == 1 then
-              return cfg.get_codelldb_adapter(codelldb_path, liblldb_path)
-            elseif vim.fn.executable("codelldb") == 1 then
-              return cfg.get_codelldb_adapter(vim.fn.exepath("codelldb"), "")
-            else
-              return cfg.get_codelldb_adapter("codelldb", "")
-            end
-          end,
+        symbol_info = {
+          border = "rounded",
         },
-      }
+      })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("ClangdKeymaps", { clear = true }),
+        pattern = { "c", "cpp", "objc", "objcpp", "cuda" },
+        callback = function(event)
+          local map = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "Clangd: " .. desc })
+          end
+
+          map("<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>", "Switch source/header")
+          map("<leader>ct", "<cmd>ClangdTypeHierarchy<cr>", "Type hierarchy")
+          map("<leader>cm", "<cmd>ClangdMemoryUsage<cr>", "Memory usage")
+          map("<leader>cs", "<cmd>ClangdSymbolInfo<cr>", "Symbol info")
+          map("<leader>cA", "<cmd>ClangdAST<cr>", "View AST")
+        end,
+      })
+
+      -- ─── Go Support ────────────────────────────────────────────────────
+      require("go").setup({
+        -- Disable LSP here — we configure gopls in lsp.nix
+        lsp_cfg = false,
+        lsp_on_attach = false,
+        -- Formatting is owned by conform.nvim (one formatter on save).
+        gofmt = "gofumpt",
+        goimports = "gopls",
+        -- Linting
+        linter = "golangci-lint",
+        -- Testing (neotest-golang is the primary runner; GoTest is the fallback)
+        test_runner = "go",
+        run_in_floaterm = false,
+        -- DAP — owned by debugger.nix (delve adapter + configurations).
+        dap_debug = false,
+        -- Tags
+        tag_transform = "snakecase",
+        tag_options = "json=omitempty",
+        -- Misc
+        verbose = false,
+        log_path = vim.fn.stdpath("cache") .. "/gonvim.log",
+        icons = { breakpoint = "\u{F057} ", currentpos = "\u{25B6} " },
+      })
+
+      -- Go-specific keymaps
+      local go_keys = vim.api.nvim_create_augroup("GoKeymaps", { clear = true })
+      vim.api.nvim_create_autocmd("FileType", {
+        group = go_keys,
+        pattern = { "go" },
+        callback = function(event)
+          local map = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "Go: " .. desc })
+          end
+
+          map("<leader>Gt", "<cmd>GoTest<cr>", "Run tests")
+          map("<leader>Gf", "<cmd>GoTestFunc<cr>", "Test function")
+          map("<leader>Gc", "<cmd>GoCoverage<cr>", "Toggle coverage")
+          map("<leader>Ga", "<cmd>GoAddTag<cr>", "Add struct tags")
+          map("<leader>Gr", "<cmd>GoRmTag<cr>", "Remove struct tags")
+          map("<leader>Gi", "<cmd>GoImpl<cr>", "Implement interface")
+          map("<leader>Ge", "<cmd>GoIfErr<cr>", "Generate if err")
+          map("<leader>Gd", function() require("dap").continue() end, "Start debugger")
+          map("<leader>GD", function() require("dap").terminate() end, "Stop debugger")
+          map("<leader>Gl", "<cmd>GoLint<cr>", "Lint")
+          map("<leader>Gv", "<cmd>GoVet<cr>", "Vet")
+          map("<leader>Gg", "<cmd>GoGenerate<cr>", "Go generate")
+          map("<leader>Gm", "<cmd>GoModTidy<cr>", "Go mod tidy")
+        end,
+      })
     '';
   };
 }

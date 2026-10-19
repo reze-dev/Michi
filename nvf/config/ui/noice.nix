@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ ... }: {
   config.vim = {
     ui.noice = {
       enable = true;
@@ -7,13 +7,14 @@
           override = {
             "vim.lsp.util.convert_input_to_markdown_lines" = true;
             "vim.lsp.util.stylize_markdown" = true;
-            "cmp.entry.get_documentation" = true;
           };
           hover = {
             enabled = true;
           };
+          # blink.cmp owns the automatic signature window (completion.nix);
+          # keeping noice's would render a second signature popup.
           signature = {
-            enabled = true;
+            enabled = false;
           };
         };
         presets = {
@@ -41,20 +42,7 @@
     notify.nvim-notify = {
       enable = true;
       setupOpts = {
-        stages = "fade_in_slide_out";
-        timeout = 3000;
-        max_height = lib.mkLuaInline "function() return math.floor(vim.o.lines * 0.75) end";
-        max_width = lib.mkLuaInline "function() return math.floor(vim.o.columns * 0.75) end";
-        on_open = lib.mkLuaInline "function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end";
-        render = "wrapped-compact";
-        top_down = true;
-      };
-    };
-
-    extraPlugins = with pkgs.vimPlugins; {
-      dressing-nvim = {
-        package = dressing-nvim;
-        setup = "require('dressing').setup({})";
+        background_colour = "#1e1e2e";
       };
     };
 

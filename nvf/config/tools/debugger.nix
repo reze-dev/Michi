@@ -1,80 +1,145 @@
-{ pkgs, ... }: {
+{ pkgs, ... }: let
+  pythonWithDebugpy = pkgs.python3.withPackages (ps: [ ps.debugpy ]);
+in {
   config.vim = {
     debugger.nvim-dap = {
       enable = true;
-      ui = {
-        enable = true;
-        setupOpts = {
-          icons = {
-            expanded = "";
-            collapsed = "";
-            current_frame = "";
-          };
-          layouts = [
-            {
-              elements = [
-                {
-                  id = "scopes";
-                  size = 0.35;
-                }
-                {
-                  id = "breakpoints";
-                  size = 0.15;
-                }
-                {
-                  id = "stacks";
-                  size = 0.25;
-                }
-                {
-                  id = "watches";
-                  size = 0.25;
-                }
-              ];
-              size = 40;
-              position = "left";
-            }
-            {
-              elements = [
-                {
-                  id = "repl";
-                  size = 0.5;
-                }
-                {
-                  id = "console";
-                  size = 0.5;
-                }
-              ];
-              size = 0.25;
-              position = "bottom";
-            }
-          ];
-          floating = {
-            border = "rounded";
-            mappings = {
-              close = [
-                "q"
-                "<Esc>"
-              ];
-            };
-          };
-        };
+      # Upstream uses nvim-dap-view, not the archived nvim-dap-ui.
+      ui.enable = false;
+      # Every nivo default mapping is replaced by the keymaps below.
+      mappings = {
+        continue = null;
+        restart = null;
+        terminate = null;
+        runLast = null;
+        toggleRepl = null;
+        hover = null;
+        toggleBreakpoint = null;
+        runToCursor = null;
+        stepInto = null;
+        stepOut = null;
+        stepOver = null;
+        stepBack = null;
+        goUp = null;
+        goDown = null;
+        toggleDapUI = null;
       };
     };
 
     extraPlugins = with pkgs.vimPlugins; {
-      nvim-nio = {
-        package = nvim-nio;
+      nvim-dap-view = {
+        package = nvim-dap-view;
       };
       nvim-dap-virtual-text = {
         package = nvim-dap-virtual-text;
-      };
-      nvim-dap-go = {
-        package = nvim-dap-go;
       };
       nvim-dap-python = {
         package = nvim-dap-python;
       };
     };
+
+    keymaps = [
+      {
+        key = "<leader>db";
+        mode = "n";
+        action = "function() require('dap').toggle_breakpoint() end";
+        lua = true;
+        desc = "DAP: toggle breakpoint";
+      }
+      {
+        key = "<leader>dB";
+        mode = "n";
+        action = "function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end";
+        lua = true;
+        desc = "DAP: conditional breakpoint";
+      }
+      {
+        key = "<leader>dc";
+        mode = "n";
+        action = "function() require('dap').continue() end";
+        lua = true;
+        desc = "DAP: continue";
+      }
+      {
+        key = "<leader>dC";
+        mode = "n";
+        action = "function() require('dap').run_to_cursor() end";
+        lua = true;
+        desc = "DAP: run to cursor";
+      }
+      {
+        key = "<leader>di";
+        mode = "n";
+        action = "function() require('dap').step_into() end";
+        lua = true;
+        desc = "DAP: step into";
+      }
+      {
+        key = "<leader>do";
+        mode = "n";
+        action = "function() require('dap').step_over() end";
+        lua = true;
+        desc = "DAP: step over";
+      }
+      {
+        key = "<leader>dO";
+        mode = "n";
+        action = "function() require('dap').step_out() end";
+        lua = true;
+        desc = "DAP: step out";
+      }
+      {
+        key = "<leader>dp";
+        mode = "n";
+        action = "function() require('dap').pause() end";
+        lua = true;
+        desc = "DAP: pause";
+      }
+      {
+        key = "<leader>dr";
+        mode = "n";
+        action = "function() require('dap').restart() end";
+        lua = true;
+        desc = "DAP: restart";
+      }
+      {
+        key = "<leader>dl";
+        mode = "n";
+        action = "function() require('dap').run_last() end";
+        lua = true;
+        desc = "DAP: run last";
+      }
+      {
+        key = "<leader>dt";
+        mode = "n";
+        action = "function() require('dap').terminate() end";
+        lua = true;
+        desc = "DAP: terminate";
+      }
+      {
+        key = "<leader>dw";
+        mode = "n";
+        action = "function() require('dap.ui.widgets').hover() end";
+        lua = true;
+        desc = "DAP: widgets";
+      }
+      {
+        key = "<leader>du";
+        mode = "n";
+        action = "<cmd>DapViewToggle<cr>";
+        desc = "DAP: toggle UI";
+      }
+      {
+        key = "<leader>de";
+        mode = [
+          "n"
+          "v"
+        ];
+        action = "function() require('dap-view').add_expr() end";
+        lua = true;
+        desc = "DAP: eval";
+      }
+    ];
 
     luaConfigRC.dap_setup = ''
       local ok_dap, dap = pcall(require, "dap")
@@ -83,25 +148,20 @@
         vim.fn.sign_define("DapBreakpoint", { text = " ", texthl = "DiagnosticError", linehl = "", numhl = "" })
         vim.fn.sign_define("DapBreakpointCondition", { text = " ", texthl = "DiagnosticWarn", linehl = "", numhl = "" })
         vim.fn.sign_define("DapBreakpointRejected", { text = " ", texthl = "DiagnosticError", linehl = "", numhl = "" })
-        vim.fn.sign_define("DapLogPoint", { text = " ", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
-        vim.fn.sign_define("DapStopped", { text = " ", texthl = "DiagnosticOk", linehl = "DapStoppedLine", numhl = "" })
+        vim.fn.sign_define("DapLogPoint", { text = "\u{25C6} ", texthl = "DiagnosticInfo", linehl = "", numhl = "" })
+        vim.fn.sign_define("DapStopped", { text = "\u{25B6} ", texthl = "DiagnosticOk", linehl = "DapStoppedLine", numhl = "" })
         vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
 
-        -- DAP UI Listeners
-        local ok_dapui, dapui = pcall(require, "dapui")
-        if ok_dapui then
-          dap.listeners.after.event_initialized["dapui_config"] = function()
-            pcall(function() dapui.open({}) end)
-          end
-          dap.listeners.before.event_terminated["dapui_config"] = function()
-            pcall(function() dapui.close({}) end)
-          end
-          dap.listeners.before.event_exited["dapui_config"] = function()
-            pcall(function() dapui.close({}) end)
-          end
-
-          vim.keymap.set("n", "<leader>du", function() dapui.toggle({}) end, { desc = "DAP: toggle UI" })
-          vim.keymap.set({ "n", "v" }, "<leader>de", function() dapui.eval() end, { desc = "DAP: eval" })
+        -- DAP View (modern UI replacing the archived dap-ui)
+        local ok_dap_view, dap_view = pcall(require, "dap-view")
+        if ok_dap_view then
+          dap_view.setup({
+            winbar = { show = true },
+            -- The source's `height = 12` was renamed to `size` upstream
+            -- (nvim-dap-view >= 1.0); values above 1 are absolute lines.
+            windows = { size = 12 },
+            auto_toggle = true,
+          })
         end
 
         -- DAP Virtual Text
@@ -131,33 +191,14 @@
           })
         end
 
-        -- DAP Go
-        local ok_dap_go, dap_go = pcall(require, "dap-go")
-        if ok_dap_go then
-          dap_go.setup({})
-        end
-
         -- DAP Python
         local ok_dap_py, dap_py = pcall(require, "dap-python")
         if ok_dap_py then
-          local debugpy_path = vim.fn.exepath("python3")
-          dap_py.setup(debugpy_path)
+          local debugpy_python = "${pythonWithDebugpy}/bin/python3"
+          dap_py.setup(
+            vim.fn.filereadable(debugpy_python) == 1 and debugpy_python or vim.fn.exepath("python3")
+          )
         end
-
-        -- Keymaps
-        local map = vim.keymap.set
-        map("n", "<leader>db", function() dap.toggle_breakpoint() end, { desc = "DAP: toggle breakpoint" })
-        map("n", "<leader>dB", function() dap.set_breakpoint(vim.fn.input("Breakpoint condition: ")) end, { desc = "DAP: conditional breakpoint" })
-        map("n", "<leader>dc", function() dap.continue() end, { desc = "DAP: continue" })
-        map("n", "<leader>dC", function() dap.run_to_cursor() end, { desc = "DAP: run to cursor" })
-        map("n", "<leader>di", function() dap.step_into() end, { desc = "DAP: step into" })
-        map("n", "<leader>do", function() dap.step_over() end, { desc = "DAP: step over" })
-        map("n", "<leader>dO", function() dap.step_out() end, { desc = "DAP: step out" })
-        map("n", "<leader>dp", function() dap.pause() end, { desc = "DAP: pause" })
-        map("n", "<leader>dr", function() dap.restart() end, { desc = "DAP: restart" })
-        map("n", "<leader>dl", function() dap.run_last() end, { desc = "DAP: run last" })
-        map("n", "<leader>dt", function() dap.terminate() end, { desc = "DAP: terminate" })
-        map("n", "<leader>dw", function() require("dap.ui.widgets").hover() end, { desc = "DAP: widgets" })
 
         -- CodeLLDB Discovery & Adapter
         local codelldb_pkg = "${pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter}/bin/codelldb"
@@ -184,8 +225,10 @@
             args = codelldb_args,
           },
         }
-        dap.adapters.lldb = dap.adapters.codelldb
+        -- Clone (don't share the table — dap mutates per launch)
+        dap.adapters.lldb = vim.tbl_extend("force", {}, dap.adapters.codelldb)
 
+        -- Executable Discovery & Selection Helper
         local function get_binary()
           local cwd = vim.fn.getcwd()
           local candidates = {}
@@ -233,6 +276,11 @@
             end
           end
 
+          -- Single candidate: return immediately, no picker, no prompt.
+          if #candidates == 1 then
+            return candidates[1]
+          end
+
           local co = coroutine.running()
           if co and #candidates > 0 then
             local items = {}
@@ -260,8 +308,6 @@
               end
             end)
             return coroutine.yield()
-          elseif #candidates == 1 and not co then
-            return candidates[1]
           else
             local input = vim.fn.input("Path to executable: ", cwd .. "/", "file")
             if input == "" then
@@ -271,58 +317,62 @@
           end
         end
 
-        local codelldb_configurations = {
-          {
-            name = "Launch Binary (Smart Picker)",
-            type = "codelldb",
-            request = "launch",
-            program = get_binary,
-            cwd = "''${workspaceFolder}",
-            stopOnEntry = false,
-            args = {},
-          },
-          {
-            name = "Launch Binary with Arguments",
-            type = "codelldb",
-            request = "launch",
-            program = get_binary,
-            cwd = "''${workspaceFolder}",
-            stopOnEntry = false,
-            args = function()
-              local args_str = vim.fn.input("Arguments: ")
-              if args_str == "" then
-                return {}
-              end
-              return vim.split(args_str, "%s+", { trimempty = true })
-            end,
-          },
-          {
-            name = "Attach to Process",
-            type = "codelldb",
-            request = "attach",
-            pid = function()
-              return require("dap.utils").pick_process()
-            end,
-            cwd = "''${workspaceFolder}",
-          },
-          {
-            name = "Load Core Dump",
-            type = "codelldb",
-            request = "attach",
-            program = get_binary,
-            coreDumpPath = function()
-              local core_path = vim.fn.input("Path to core dump: ", vim.fn.getcwd() .. "/", "file")
-              return core_path ~= "" and core_path or nil
-            end,
-            cwd = "''${workspaceFolder}",
-          },
-        }
+        -- C / C++ / Rust Launch Configurations
+        local function codelldb_configs()
+          return {
+            {
+              name = "Launch Binary (Smart Picker)",
+              type = "codelldb",
+              request = "launch",
+              program = get_binary,
+              cwd = "''${workspaceFolder}",
+              stopOnEntry = false,
+              args = {},
+            },
+            {
+              name = "Launch Binary with Arguments",
+              type = "codelldb",
+              request = "launch",
+              program = get_binary,
+              cwd = "''${workspaceFolder}",
+              stopOnEntry = false,
+              args = function()
+                local args_str = vim.fn.input("Arguments: ")
+                if args_str == "" then
+                  return {}
+                end
+                return vim.split(args_str, "%s+", { trimempty = true })
+              end,
+            },
+            {
+              name = "Attach to Process",
+              type = "codelldb",
+              request = "attach",
+              pid = function()
+                return require("dap.utils").pick_process()
+              end,
+              cwd = "''${workspaceFolder}",
+            },
+            {
+              name = "Load Core Dump",
+              type = "codelldb",
+              request = "attach",
+              program = get_binary,
+              coreDumpPath = function()
+                local core_path = vim.fn.input("Path to core dump: ", vim.fn.getcwd() .. "/", "file")
+                return core_path ~= "" and core_path or nil
+              end,
+              cwd = "''${workspaceFolder}",
+            },
+          }
+        end
 
-        dap.configurations.cpp = codelldb_configurations
-        dap.configurations.c = codelldb_configurations
-        dap.configurations.rust = codelldb_configurations
+        -- Deep-copied per filetype so per-launch mutations don't leak across ft
+        dap.configurations.cpp = codelldb_configs()
+        dap.configurations.c = codelldb_configs()
+        dap.configurations.rust = codelldb_configs()
 
-        -- Delve (Go)
+        -- Delve (Go) Adapter & Configurations
         local dlv_pkg = "${pkgs.delve}/bin/dlv"
         local dlv_path = "dlv"
         if vim.fn.executable(dlv_pkg) == 1 then

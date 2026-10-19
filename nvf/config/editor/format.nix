@@ -8,15 +8,11 @@
         goimports.enable = true;
         gofumpt.enable = true;
         stylua.enable = true;
-        ruff.enable = true;
-        ruff-organize-imports.enable = true;
         taplo.enable = true;
         prettier.enable = true;
         nixfmt.enable = true;
         shfmt.enable = true;
         fish-indent.enable = true;
-        gersemi.enable = true;
-        sqlfluff.enable = true;
       };
       setupOpts = {
         formatters_by_ft = {
@@ -27,14 +23,13 @@
             "goimports"
             "gofumpt"
           ];
+          zig = [ "zigfmt" ];
           lua = [ "stylua" ];
           python = [
-            "ruff"
-            "ruff-organize-imports"
+            "ruff_organize_imports"
+            "ruff_format"
           ];
           toml = [ "taplo" ];
-          cmake = [ "gersemi" ];
-          sql = [ "sqlfluff" ];
           javascript = [ "prettier" ];
           typescript = [ "prettier" ];
           javascriptreact = [ "prettier" ];
@@ -45,25 +40,36 @@
           json = [ "prettier" ];
           jsonc = [ "prettier" ];
           yaml = [ "prettier" ];
+          "yaml.docker-compose" = [ "prettier" ];
+          hcl = [ "terraform_fmt" ];
+          terraform = [ "terraform_fmt" ];
+          "terraform-vars" = [ "terraform_fmt" ];
           markdown = [ "prettier" ];
           graphql = [ "prettier" ];
           nix = [ "nixfmt" ];
-          fish = [ "fish-indent" ];
+          fish = [ "fish_indent" ];
           sh = [ "shfmt" ];
           bash = [ "shfmt" ];
           "_" = [ "trim_whitespace" ];
         };
         format_on_save = lib.mkLuaInline ''
           function(bufnr)
+            -- Disable if buffer variable is set (toggle with :FormatToggle)
             if vim.b[bufnr].disable_autoformat or vim.g.disable_autoformat then
               return
             end
+            -- Never auto-format commit messages
+            local ft = vim.bo[bufnr].filetype
+            if ft == "gitcommit" or ft == "gitrebase" then
+              return
+            end
             return {
-              timeout_ms = 500,
+              timeout_ms = 1000,
               lsp_format = "fallback",
             }
           end
         '';
+        format_after_save = null;
         formatters = {
           shfmt = {
             prepend_args = [
@@ -81,6 +87,14 @@
           };
           clang-format = {
             prepend_args = [ "-fallback-style=LLVM" ];
+          };
+          # Absolute commands for formatters nvf has no preset for, so the
+          # binaries ship with the wrapper.
+          zigfmt = {
+            command = "${pkgs.zig}/bin/zig";
+          };
+          terraform_fmt = {
+            command = "${pkgs.terraform}/bin/terraform";
           };
           ruff_format = {
             command = "${pkgs.ruff}/bin/ruff";

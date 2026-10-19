@@ -2,6 +2,23 @@
   config.vim = {
     git.gitsigns = {
       enable = true;
+      # All gitsigns keymaps are defined by the source on_attach below; nvf's
+      # global defaults (]c/[c, <leader>h*, <leader>tb/td) would be extra.
+      mappings = {
+        nextHunk = null;
+        previousHunk = null;
+        stageHunk = null;
+        undoStageHunk = null;
+        resetHunk = null;
+        stageBuffer = null;
+        resetBuffer = null;
+        previewHunk = null;
+        blameLine = null;
+        toggleBlame = null;
+        diffThis = null;
+        diffProject = null;
+        toggleDeleted = null;
+      };
       setupOpts = {
         signs = {
           add = {
@@ -11,10 +28,10 @@
             text = "▎";
           };
           delete = {
-            text = "";
+            text = lib.mkLuaInline ''"\u{2581}"'';
           };
           topdelete = {
-            text = "";
+            text = lib.mkLuaInline ''"\u{2581}"'';
           };
           changedelete = {
             text = "▎";
@@ -31,10 +48,10 @@
             text = "▎";
           };
           delete = {
-            text = "";
+            text = lib.mkLuaInline ''"\u{2581}"'';
           };
           topdelete = {
-            text = "";
+            text = lib.mkLuaInline ''"\u{2581}"'';
           };
           changedelete = {
             text = "▎";
@@ -70,7 +87,7 @@
               if vim.wo.diff then
                 vim.cmd.normal({ "]c", bang = true })
               else
-                gs.nav_hunk("next")
+                gs.nav_hunk("next", { target = "all" })
               end
             end, { desc = "Next git hunk" })
 
@@ -78,7 +95,7 @@
               if vim.wo.diff then
                 vim.cmd.normal({ "[c", bang = true })
               else
-                gs.nav_hunk("prev")
+                gs.nav_hunk("prev", { target = "all" })
               end
             end, { desc = "Previous git hunk" })
 
@@ -103,6 +120,5 @@
       };
     };
 
-    utility.diffview-nvim.enable = true;
   };
 }

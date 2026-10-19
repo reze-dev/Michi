@@ -13,38 +13,9 @@
           doCheck = false;
         };
       };
-      rose-pine = {
-        package = rose-pine;
-      };
     };
 
     luaConfigRC.theme_setup = ''
-      local ok_rp, rose_pine = pcall(require, "rose-pine")
-      if ok_rp then
-        rose_pine.setup({
-          variant = "main",
-          dark_variant = "main",
-          dim_inactive_windows = false,
-          extend_background_behind_borders = true,
-          styles = {
-            bold = true,
-            italic = true,
-            transparency = true,
-          },
-          highlight_groups = {
-            SnacksPickerList = { bg = "none" },
-            SnacksPickerInput = { bg = "none" },
-            FloatBorder = { fg = "highlight_high", bg = "surface" },
-            NormalFloat = { bg = "surface" },
-            CursorLine = { bg = "highlight_low" },
-            CursorLineNr = { fg = "gold" },
-            StatusLine = { fg = "love", bg = "love", blend = 10 },
-            StatusLineNC = { fg = "subtle", bg = "surface" },
-            WhichKeyFloat = { bg = "surface" },
-          },
-        })
-      end
-
       local ok_base46, base46 = pcall(require, "base46")
       if ok_base46 then
         base46.setup({
@@ -68,66 +39,121 @@
       end
 
       package.preload["core.theme"] = function()
-        local base46_state_file = vim.fn.stdpath("state") .. "/base46-theme"
-        return {
-          base46_state_file = base46_state_file,
-          read_base46_theme = function()
-            if vim.fn.filereadable(base46_state_file) ~= 1 then return nil end
-            local lines = vim.fn.readfile(base46_state_file)
-            local theme = lines[1]
-            return theme and theme ~= "" and theme or nil
-          end,
-          write_base46_theme = function(theme)
-            vim.fn.mkdir(vim.fn.fnamemodify(base46_state_file, ":h"), "p")
-            vim.fn.writefile({ theme }, base46_state_file)
-          end,
-        }
-      end
+        local M = {}
+        M.base46_state_file = vim.fn.stdpath("state") .. "/base46-theme"
 
-      local theme_state = require("core.theme")
-      local saved_theme = theme_state.read_base46_theme()
-
-      local function apply_theme(choice)
-        if choice == "rose-pine" then
-          vim.cmd.colorscheme("rose-pine")
-        else
-          local ok, b46 = pcall(require, "base46")
-          if ok then
-            b46.load(choice)
-            vim.api.nvim_exec_autocmds("ColorScheme", {})
-          else
-            vim.cmd.colorscheme("rose-pine")
+        function M.read_base46_theme()
+          if vim.fn.filereadable(M.base46_state_file) ~= 1 then
+            return nil
           end
+
+          local lines = vim.fn.readfile(M.base46_state_file)
+          local theme = lines[1]
+          if type(theme) == "string" then
+            theme = vim.trim(theme)
+          end
+          return theme and theme ~= "" and theme or nil
         end
+
+        function M.write_base46_theme(theme)
+          if type(theme) ~= "string" or theme == "" then
+            return false
+          end
+          local dir = vim.fn.fnamemodify(M.base46_state_file, ":h")
+          if not vim.uv.fs_stat(dir) then
+            vim.fn.mkdir(dir, "p")
+          end
+          return vim.fn.writefile({ theme }, M.base46_state_file) == 0
+        end
+
+        return M
       end
 
-      local saved_theme = theme_state.read_base46_theme()
-      apply_theme(saved_theme or "rose-pine")
+      local ok_state, theme_state = pcall(require, "core.theme")
 
-      local function pick_theme()
-        local themes = { "rose-pine" }
+      local function theme_names()
+        local names = {}
         for _, path in ipairs(vim.api.nvim_get_runtime_file("lua/base46/themes/*.lua", true)) do
           local name = vim.fn.fnamemodify(path, ":t:r")
-          themes[#themes + 1] = name
+          names[#names + 1] = name
         end
-        table.sort(themes)
-
-        vim.ui.select(themes, { prompt = "Select theme: " }, function(choice)
-          if choice then
-            require("core.theme").write_base46_theme(choice)
-            apply_theme(choice)
-            vim.notify("Theme: " .. choice, vim.log.levels.INFO)
-          end
-        end)
+        table.sort(names)
+        return names
       end
 
-      vim.keymap.set("n", "<leader>ut", pick_theme, { desc = "Themes: choose theme" })
-      vim.api.nvim_create_user_command("NvChadTheme", pick_theme, { desc = "Choose colorscheme" })
+      local function apply_theme(name)
+        base46.load(name)
+      end
+
+      local function sync_notify_bg()
+        local bg = nil
+        local ok_base, base46_mod = pcall(require, "base46")
+        if ok_base then
+          local ok, colors = pcall(function()
+            return base46_mod.theme_tables[base46_mod.current_theme].base_30
+          end)
+          if ok and type(colors) == "table" then
+            bg = colors.darker_black or colors.black
+          end
+          if not bg and base46_mod.get_builtin_theme and base46_mod.current_theme then
+            local ok2, theme = pcall(base46_mod.get_builtin_theme, base46_mod.current_theme)
+            if ok2 and type(theme) == "table" then
+              local b30 = theme.base_30 or {}
+              bg = b30.darker_black or b30.black
+            end
+          end
+        end
+        if not bg then
+          local normal = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+          bg = normal.bg
+        end
+        if not bg then
+          local nf = vim.api.nvim_get_hl(0, { name = "NormalFloat", link = false })
+          bg = nf.bg
+        end
+        if type(bg) == "number" then
+          bg = ("#%06x"):format(bg)
+        end
+        if type(bg) ~= "string" or bg == "" then
+          bg = "#1e1e2e"
+        end
+        vim.api.nvim_set_hl(0, "NotifyBackground", { bg = bg })
+      end
+
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("ThemeNotifyBackground", { clear = true }),
+        callback = sync_notify_bg,
+      })
+
       package.preload["base46-themes"] = function()
         return {
-          pick = pick_theme,
+          pick = function()
+            vim.ui.select(theme_names(), { prompt = "NvChad theme" }, function(choice)
+              if choice then
+                theme_state.write_base46_theme(choice)
+                apply_theme(choice)
+                vim.notify("Theme: " .. choice, vim.log.levels.INFO)
+              end
+            end)
+          end,
         }
       end
+
+      if not ok_state then
+        apply_theme("rosepine")
+      else
+        local saved_theme = theme_state.read_base46_theme()
+        apply_theme(saved_theme or "rosepine")
+      end
+      vim.schedule(sync_notify_bg)
+
+      vim.keymap.set("n", "<leader>ut", function()
+        require("base46-themes").pick()
+      end, { desc = "Themes: choose NvChad theme" })
+
+      vim.api.nvim_create_user_command("NvChadTheme", function()
+        require("base46-themes").pick()
+      end, { desc = "Choose an NvChad Base46 colorscheme" })
     '';
   };
 }

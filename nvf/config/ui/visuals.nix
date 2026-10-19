@@ -1,4 +1,4 @@
-{ ... }: {
+{ lib, ... }: {
   config.vim = {
     visuals = {
       nvim-web-devicons.enable = true;
@@ -43,8 +43,10 @@
               "dashboard"
               "snacks_dashboard"
               "lazy"
+              "mason"
               "notify"
               "oil"
+              "harpoon"
               "toggleterm"
             ];
           };
@@ -57,8 +59,14 @@
       colorizer = {
         enable = true;
         setupOpts = {
+          # nvf models colorizer's v2 `filetypes` table (ft -> overrides)
+          # rather than the source's legacy list; "!" entries disable.
           filetypes = {
             "*" = { };
+            "!lazy" = { };
+            "!mason" = { };
+            "!snacks_dashboard" = { };
+            "!dashboard" = { };
           };
           user_default_options = {
             RGB = true;
@@ -72,7 +80,7 @@
             css_fn = true;
             mode = "background";
             tailwind = false;
-            virtualtext = "󱓻";
+            virtualtext = "■";
             always_update = false;
           };
         };
@@ -90,7 +98,12 @@
             "dashboard"
             "snacks_dashboard"
             "lazy"
-            "SnacksPickerList"
+            "mason"
+            "snacks_picker_input"
+            "snacks_picker_list"
+            "TelescopePrompt"
+            "dap-view"
+            "dap-view-term"
           ];
         };
       };
@@ -113,32 +126,25 @@
         # dependency on it is visible rather than incidental.
         picker = {
           enabled = true;
-          win = {
-            input = {
-              border = "rounded";
-            };
-            list = {
-              border = "rounded";
-            };
-            preview = {
-              border = "rounded";
-            };
-          };
         };
 
         # noice.nvim + nvim-notify already own vim.notify; leaving snacks'
         # notifier on gives two frontends fighting over it.
-        notifier.enable = false;
+        notifier = {
+          enabled = false;
+        };
 
         # vim-illuminate owns the word under the cursor.
-        words.enable = false;
+        words = {
+          enabled = false;
+        };
 
         dashboard = {
           enabled = true;
           preset = {
             keys = [
               {
-                icon = " ";
+                icon = lib.mkLuaInline ''"\u{F0F6} "'';
                 key = "f";
                 desc = "Find File";
                 action = ":lua Snacks.picker.files()";
@@ -174,35 +180,47 @@
                 action = ":lua Snacks.picker.files({cwd = vim.fn.stdpath('config')})";
               }
               {
-                icon = " ";
+                icon = lib.mkLuaInline ''"\u{F12E} "'';
+                key = "L";
+                desc = "Lazy";
+                action = ":Lazy";
+              }
+              {
+                icon = lib.mkLuaInline ''"\u{F011} "'';
                 key = "q";
                 desc = "Quit";
                 action = ":qa";
               }
             ];
             header = ''
-                                                                                     
-                                                                                     
-                                                                                   
-                    ████ ██████           █████      ██                      
-                   ███████████             █████                              
-                   █████████ ███████████████████ ███   ███████████    
-                  █████████  ███    █████████████ █████ ██████████████    
-                 █████████ ██████████ █████████ █████ █████ ████ █████    
-               ███████████ ███    ███ █████████ █████ █████ ████ █████   
-              ██████  █████████████████████ ████ █████ █████ ████ ██████  
-                                                                                     
-                                                                                             
-                                                                                     
-                                                                                   
-                                                                                     
-            '';
+
+
+                                                                                        
+                          ████ ██████           █████      ██                     
+                         ███████████             █████                             
+                         █████████ ███████████████████ ███   ███████████   
+                        █████████  ███    █████████████ █████ ██████████████   
+                       █████████ ██████████ █████████ █████ █████ ████ █████   
+                     ███████████ ███    ███ █████████ █████ █████ ████ █████  
+                    ██████  █████████████████████ ████ █████ █████ ████ ██████ 
+
+
+
+
+
+
+          '';
           };
           sections = [
             {
               pane = 1;
               section = "header";
               padding = 2;
+            }
+            {
+              pane = 1;
+              section = "startup";
+              padding = 1;
             }
             {
               pane = 2;
@@ -212,26 +230,11 @@
             }
           ];
         };
-        notifier = {
-          enabled = true;
-          timeout = 3000;
-          style = "compact";
-        };
         quickfile = {
           enabled = true;
         };
         statuscolumn = {
           enabled = true;
-        };
-        words = {
-          enabled = true;
-        };
-        styles = {
-          notification = {
-            wo = {
-              wrap = true;
-            };
-          };
         };
       };
     };
@@ -240,9 +243,16 @@
       {
         key = "<leader>un";
         mode = "n";
-        action = "function() Snacks.notifier.hide() end";
+        action = "function() local ok, noice = pcall(require, 'noice'); if ok then noice.cmd('dismiss') end end";
         lua = true;
         desc = "Dismiss all notifications";
+      }
+      {
+        key = "<leader>E";
+        mode = "n";
+        action = "function() Snacks.explorer() end";
+        lua = true;
+        desc = "Explorer (Snacks)";
       }
       {
         key = "<leader>gg";
@@ -257,26 +267,6 @@
         action = "function() Snacks.lazygit.log() end";
         lua = true;
         desc = "Lazygit log (cwd)";
-      }
-      {
-        key = "]]";
-        mode = [
-          "n"
-          "t"
-        ];
-        action = "function() Snacks.words.jump(vim.v.count1) end";
-        lua = true;
-        desc = "Next reference";
-      }
-      {
-        key = "[[";
-        mode = [
-          "n"
-          "t"
-        ];
-        action = "function() Snacks.words.jump(-vim.v.count1) end";
-        lua = true;
-        desc = "Previous reference";
       }
     ];
   };

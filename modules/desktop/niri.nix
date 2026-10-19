@@ -48,7 +48,11 @@
         };
 
         # ─── Chrome ───────────────────────────────────────────────────────────
-        layout.focus-ring.width = 2;
+        layout.focus-ring = {
+          width = 2;
+          active-color = "#f9e2af";
+          inactive-color = "#7c6f64";
+        };
 
         # ─── Blur ────────────────────────────────────────────────────────────
         blur = {
@@ -89,7 +93,7 @@
             output = {
               _args = [ "eDP-1" ];
               mode = "1920x1080@144";
-              scale = 1.25;
+              scale = 1.2;
             };
           }
 
@@ -108,9 +112,15 @@
           # ─── Keybind overrides ──────────────────────────────────────────────
           {
             binds = {
-              "Mod+Return" = { spawn = [ (lib.getExe pkgs.kitty) ]; };
-              "Mod+E" = { spawn = [ (lib.getExe pkgs.nautilus) ]; };
-              "Mod+A" = { spawn = [ (lib.getExe pkgs.gnome-text-editor) ]; };
+              "Mod+Return" = {
+                spawn = [ (lib.getExe pkgs.kitty) ];
+              };
+              "Mod+E" = {
+                spawn = [ (lib.getExe pkgs.nautilus) ];
+              };
+              "Mod+A" = {
+                spawn = [ (lib.getExe pkgs.gnome-text-editor) ];
+              };
             };
           }
         ];

@@ -178,7 +178,25 @@
         "home-manager": "home-manager",
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs_2",
-        "nvf": "nvf"
+        "nvf": "nvf",
+        "sddm-pixel": "sddm-pixel"
+      }
+    },
+    "sddm-pixel": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774250945,
+        "narHash": "sha256-bzA6WUZrXgQDJvOuK5JIcnPJNRhU/8AiKg3jgAeeoBM=",
+        "owner": "mahaveergurjar",
+        "repo": "sddm",
+        "rev": "1f9507abfa8887d9816a69282bb7d78cd6458c1e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mahaveergurjar",
+        "ref": "pixel",
+        "repo": "sddm",
+        "type": "github"
       }
     }
   },

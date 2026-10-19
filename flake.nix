@@ -25,6 +25,12 @@
     # rather than a standalone generation, so it activates with nixos-rebuild.
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # SDDM theme (pixel branch)
+    sddm-pixel = {
+      url = "github:mahaveergurjar/sddm/pixel";
+      flake = false;
+    };
   };
 
   outputs =

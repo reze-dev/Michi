@@ -49,7 +49,9 @@
         group = "NvimLint";
         callback = lib.mkLuaInline ''
           function(args)
-            nvf_lint(args.buf)
+            if vim.api.nvim_buf_is_valid(args.buf) then
+              pcall(nvf_lint, args.buf)
+            end
           end
         '';
         desc = "Lint current buffer";
@@ -58,7 +60,10 @@
 
     luaConfigRC.lint_command = ''
       vim.api.nvim_create_user_command("Lint", function()
-        nvf_lint(vim.api.nvim_get_current_buf())
+        local buf = vim.api.nvim_get_current_buf()
+        if vim.api.nvim_buf_is_valid(buf) then
+          pcall(nvf_lint, buf)
+        end
       end, { desc = "Trigger linting for current buffer" })
     '';
 

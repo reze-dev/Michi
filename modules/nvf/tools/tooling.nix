@@ -19,6 +19,7 @@
       terraform-ls # terraformls
       taplo # taplo (TOML LSP & formatter)
       zls # zls
+      nil # nil (Nix LSP)
 
       # Formatters
       rustfmt # rustfmt

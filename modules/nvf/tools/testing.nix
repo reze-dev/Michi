@@ -12,6 +12,12 @@
       neotest-gtest = {
         package = neotest-gtest;
       };
+      nvim-nio = {
+        package = nvim-nio;
+      };
+      plenary-nvim = {
+        package = plenary-nvim;
+      };
     };
 
     luaConfigRC.neotest_setup = ''

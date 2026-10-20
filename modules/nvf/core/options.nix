@@ -20,12 +20,10 @@
       end
     '';
 
-    # System Environment & PATH: prepend Mason bin (~/.local/share/nvim/mason/bin),
-    # ~/go/bin, ~/.cargo/bin and ~/.local/bin when they exist and are not
-    # already in PATH (matches the standalone config's conditional prepend).
+    # System Environment & PATH: prepend ~/go/bin, ~/.cargo/bin and
+    # ~/.local/bin when they exist and are not already in PATH.
     luaConfigRC.env = ''
       local home = vim.env.HOME or vim.fn.expand("~")
-      local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
       local go_bin = home .. "/go/bin"
       local cargo_bin = home .. "/.cargo/bin"
       local local_bin = home .. "/.local/bin"
@@ -39,7 +37,6 @@
         end
       end
 
-      maybe_prepend(mason_bin)
       maybe_prepend(go_bin)
       maybe_prepend(cargo_bin)
       maybe_prepend(local_bin)

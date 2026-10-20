@@ -119,10 +119,9 @@
           explorer = {
             enabled = true;
           };
-          input.enable = true;
-          scope.enable = true;
-          lazygit.enable = true;
-          quickfile.enable = true;
+          input = { enabled = true; };
+          scope = { enabled = true; };
+          lazygit = { enabled = true; };
 
           # Replaces telescope. picker.enabled is implied, set explicitly so the
           # dependency on it is visible rather than incidental.

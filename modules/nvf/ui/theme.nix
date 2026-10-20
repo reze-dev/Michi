@@ -85,6 +85,7 @@
 
       local function apply_theme(name)
         base46.load(name)
+        vim.api.nvim_exec_autocmds("ColorScheme", { modeline = false })
       end
 
       local function sync_notify_bg()

@@ -1,10 +1,11 @@
 { ... }:
 {
-  michi.nvfModules.statusline = { ... }: {
+  michi.nvfModules.statusline = { lib, ... }: {
   config.vim = {
     statusline.lualine.enable = true;
 
-    luaConfigRC.statusline_eviline = ''
+    # Must run AFTER pluginConfigs (which contains nvf's lualine setup) and theme_setup (base46)
+    luaConfigRC.statusline_eviline = lib.nvim.dag.entryAfter [ "pluginConfigs" "theme_setup" ] ''
       local lualine = require("lualine")
 
       local function hl(group, attr, fallback)

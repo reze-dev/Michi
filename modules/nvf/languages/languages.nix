@@ -35,7 +35,15 @@
             cmd = [ (lib.getExe pkgs.rust-analyzer) ];
             # `capabilities` is the local blink.cmp-backed table created
             # in pluginRC.lsp-setup.
-            capabilities = lib.mkLuaInline "capabilities";
+            capabilities = lib.mkLuaInline ''
+              (function()
+                local ok, blink = pcall(require, "blink.cmp")
+                if ok then
+                  return blink.get_lsp_capabilities()
+                end
+                return capabilities or vim.lsp.protocol.make_client_capabilities()
+              end)()
+            '';
             on_attach = lib.mkLuaInline ''
               function(client, bufnr)
                 -- Common LSP keymaps are handled by the LspAttach autocommand in lsp.nix.

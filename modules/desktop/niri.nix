@@ -119,7 +119,7 @@
                 spawn = [ (lib.getExe pkgs.nautilus) ];
               };
               "Mod+A" = {
-                spawn = [ (lib.getExe pkgs.gnome-text-editor) ];
+                spawn = [ "emacsclient" "-c" "-a" "" ];
               };
             };
           }

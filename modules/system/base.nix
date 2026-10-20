@@ -106,9 +106,19 @@
       tmux
 
       # Lightweight GUI editor for quick edits — nix config, JSON, /etc files.
-      # Deliberately not Emacs or gedit: this is 4 MiB against Emacs's 671 MiB,
-      # and nvim (via nvf) remains the real editor. Bound to Mod+A in niri.nix.
       gnome-text-editor
     ];
+
+    # Emacs — pure-GTK build for native Wayland. The daemon starts on login via
+    # the systemd user service (services.emacs.enable) so `emacsclient` connects
+    # instantly. Bound to Mod+A in niri.nix.
+    programs.emacs = {
+      enable = true;
+      package = pkgs.emacs-pgtk;
+    };
+    services.emacs = {
+      enable = true;
+      defaultEditor = true;
+    };
   };
 }

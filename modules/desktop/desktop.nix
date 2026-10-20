@@ -38,7 +38,6 @@
         # programs.kitty in kitty.nix, and tmux by home.packages in base.nix.
         fuzzel
         mako
-        nautilus
         wl-clipboard
         brightnessctl
         playerctl

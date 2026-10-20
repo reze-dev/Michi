@@ -106,7 +106,6 @@
             ];
           }
           { spawn-at-startup = [ "mako" ]; }
-          { spawn-at-startup = [ "${pkgs.gnome.gvfs}/libexec/gvfs-udisks2-volume-monitor" ]; }
           { spawn-at-startup = [ (lib.getExe' pkgs.awww "awww-daemon") ]; }
 
           # ─── Keybind overrides ──────────────────────────────────────────────

@@ -2,8 +2,8 @@
 {
   flake.homeModules.gtk = # GTK theming. A home-manager module, imported by home.nix.
 #
-# Nautilus deliberately is not added here — desktop.nix already has it in
-# systemPackages, and listing it in two places just duplicates the store path.
+# Nautilus deliberately is not added here — nautilus.nix owns it and its
+# extensions as a separate submodule.
 { pkgs, ... }:
 
 let

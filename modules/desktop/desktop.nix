@@ -44,9 +44,9 @@
         # Media player. `playerctl` above is what exposes MPRIS metadata to
         # keybinders and status bars; mpv itself is the player.
         mpv
-        # Image viewer (GNOME's Loupe) and document viewer (zathura for PDF/EPUB).
+        # Image viewer (GNOME's Loupe) and document viewer (Evince).
         loupe
-        zathura
+        evince
         # Cursor theme. Deliberately a systemPackage rather than a fonts.packages
         # entry: fonts.packages only feeds fontconfig <dir> entries, but cursor
         # lookup walks XDG_DATA_DIRS/icons. As a systemPackage this lands in

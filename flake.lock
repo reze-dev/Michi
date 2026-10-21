@@ -92,11 +92,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1792548150,
-        "narHash": "sha256-tZULgRZcXpIzs4vnKWNUiU4Gegip7qFFf8vHMOkUN78=",
+        "lastModified": 1792548619,
+        "narHash": "sha256-tLK9PhIrdNynIlPtiMCFzeEtLs6QD0+/6ouN+ksgkNE=",
         "owner": "reze-dev",
         "repo": "dynamic-island",
-        "rev": "e4a4e32bc5577db41713b17bc64f0043fc27e78a",
+        "rev": "8d17df68a6b851bc4eeb52b18e274b6dd2ff1179",
         "type": "github"
       },
       "original": {

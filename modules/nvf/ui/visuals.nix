@@ -119,9 +119,15 @@
           explorer = {
             enabled = true;
           };
-          input = { enabled = true; };
-          scope = { enabled = true; };
-          lazygit = { enabled = true; };
+          input = {
+            enabled = true;
+          };
+          scope = {
+            enabled = true;
+          };
+          lazygit = {
+            enabled = true;
+          };
 
           # Replaces telescope. picker.enabled is implied, set explicitly so the
           # dependency on it is visible rather than incidental.
@@ -150,7 +156,11 @@
             # under nvf's lz-n loader.
             sections = [
               { section = "header"; }
-              { section = "keys"; gap = 1; padding = 1; }
+              {
+                section = "keys";
+                gap = 1;
+                padding = 1;
+              }
             ];
           };
           quickfile = {

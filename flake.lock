@@ -87,6 +87,24 @@
         "type": "github"
       }
     },
+    "isle": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1792548150,
+        "narHash": "sha256-tZULgRZcXpIzs4vnKWNUiU4Gegip7qFFf8vHMOkUN78=",
+        "owner": "reze-dev",
+        "repo": "dynamic-island",
+        "rev": "e4a4e32bc5577db41713b17bc64f0043fc27e78a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "reze-dev",
+        "repo": "dynamic-island",
+        "type": "github"
+      }
+    },
     "mnw": {
       "locked": {
         "lastModified": 1784154424,
@@ -135,6 +153,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1791734076,
+        "narHash": "sha256-i5qk1kLiit98rRbh1AXmWBNT9QXC/y4l5Wk/u5EdpDQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1792210252,
         "narHash": "sha256-Mh0PUaIv4nFY+8wAGonaEh8iBzwsmdNlwjVHmFg1Biw=",
         "owner": "NixOS",
@@ -177,7 +211,8 @@
         "helium": "helium",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
-        "nixpkgs": "nixpkgs_2",
+        "isle": "isle",
+        "nixpkgs": "nixpkgs_3",
         "nvf": "nvf",
         "sddm-pixel": "sddm-pixel"
       }

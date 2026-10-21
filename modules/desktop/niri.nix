@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, self, ... }:
 {
   # ─── Compositor (System-level half) ──────────────────────────────────────
   # Registers the niri session with the display manager and sets up
@@ -105,12 +105,16 @@
               "--components=secrets,pkcs11"
             ];
           }
-          { spawn-at-startup = [ "mako" ]; }
-          { spawn-at-startup = [ (lib.getExe' pkgs.awww "awww-daemon") ]; }
+          # mako and the plain awww daemon are both gone. The island owns
+          # org.freedesktop.Notifications now, and it starts its own awww
+          # daemon in the `isle` namespace, so there is exactly one of each.
 
           # ─── Keybind overrides ──────────────────────────────────────────────
           {
-            binds = {
+            # The island's binds come first so that a key of the same name
+            # here would win: Mod+1..9 is workspace switching in niri, so
+            # the island uses Mod+Ctrl+1..9, which is free.
+            binds = inputs.isle.lib.keybinds.niriBinds // {
               "Mod+Return" = {
                 spawn = [ (lib.getExe pkgs.kitty) ];
               };
@@ -118,7 +122,12 @@
                 spawn = [ (lib.getExe pkgs.nautilus) ];
               };
               "Mod+A" = {
-                spawn = [ "emacsclient" "-c" "-a" "" ];
+                spawn = [
+                  "emacsclient"
+                  "-c"
+                  "-a"
+                  ""
+                ];
               };
             };
           }

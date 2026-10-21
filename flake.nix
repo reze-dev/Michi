@@ -26,6 +26,11 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    # The Dynamic Island Shell: the island, its daemon, and the keybinds.
+    # A separate project with its own release cycle, so it is tracked as an
+    # input rather than vendored in.
+    isle.url = "github:reze-dev/dynamic-island";
+
     # SDDM theme (pixel branch)
     sddm-pixel = {
       url = "github:mahaveergurjar/sddm/pixel";

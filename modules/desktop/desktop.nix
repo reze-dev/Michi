@@ -37,7 +37,6 @@
         # kitty and tmux are intentionally absent: kitty is owned by
         # programs.kitty in kitty.nix, and tmux by home.packages in base.nix.
         fuzzel
-        mako
         wl-clipboard
         brightnessctl
         playerctl
@@ -53,8 +52,9 @@
         # sw/share/icons/Bibata-Modern-Ice, where niri and every Xcursor client
         # can actually find it.
         bibata-cursors
-        # Wallpaper daemon. Started from niri's spawn-at-startup (niri.nix);
-        # by default it restores the last wallpaper from its cache on start.
+        # Wallpaper engine. The client binary is what the island shells out
+        # to when a wallpaper is applied; the daemon itself is started as a
+        # user service by the island's module, in the `isle` namespace.
         awww
         # Helium is not in nixpkgs yet, so it comes from the tomsch/helium-nix
         # input (see flake.nix) rather than from pkgs.

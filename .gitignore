@@ -1,2 +1,5 @@
 result
 result-*
+
+# A local checkout of the nvim configuration, not part of this repository.
+nvim/

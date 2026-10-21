@@ -18,6 +18,10 @@
       # happened.
       claimNotifications = true;
 
+      # The system tray. The name is free too: the shell that used to be
+      # the tray host is gone.
+      claimTray = true;
+
       # One target, and it has to name one that actually exists: a unit
       # whose WantedBy names a target that does not exist is never started
       # at all. The compositor-specific targets some compositors ship do not

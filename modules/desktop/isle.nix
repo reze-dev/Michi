@@ -18,10 +18,16 @@
       # happened.
       claimNotifications = true;
 
-      # One target, and it has to name a compositor that is actually
-      # installed: a unit whose WantedBy names a target that does not exist
-      # is never started at all.
-      sessionTargets = [ "niri-session.target" ];
+      # One target, and it has to name one that actually exists: a unit
+      # whose WantedBy names a target that does not exist is never started
+      # at all. The compositor-specific targets some compositors ship do not
+      # exist on NixOS.
+      sessionTargets = [ "graphical-session.target" ];
+
+      # The island needs WAYLAND_DISPLAY, and niri is what puts it there.
+      # Without this the island can win the race against the compositor and
+      # start with no display to draw on.
+      compositorService = "niri.service";
     };
   };
 }

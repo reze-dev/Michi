@@ -39,11 +39,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1792231254,
-        "narHash": "sha256-ZK0hvtYd5QaS/SjVQsLeal3RikeMLAgLwc9f7XzFDSk=",
+        "lastModified": 1792666760,
+        "narHash": "sha256-KwzUYn9JDNHzAybXUnc8yvVl/k6R7POucChy/J6s9nw=",
         "owner": "tomsch",
         "repo": "helium-nix",
-        "rev": "37b5c08280ac0389847be5053a15d4a67294e930",
+        "rev": "46aab6fbeaea3d6f6a53bfd7dbd3004ed280810a",
         "type": "github"
       },
       "original": {
@@ -59,11 +59,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792495086,
-        "narHash": "sha256-TyoYH983Nsc++1scw0SoOEKshPSJWJDxK7tTmuZ974M=",
+        "lastModified": 1792668857,
+        "narHash": "sha256-chUrnAqBhBLvXBUsLFxFYBIl8c0GWp06wdjmAMS8l+U=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "ec80131710bffcdf3b8498cf41f3a0579833b023",
+        "rev": "cb7de2c7e589afe7531d4832c71ad4df144624ea",
         "type": "github"
       },
       "original": {
@@ -92,11 +92,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1792551628,
-        "narHash": "sha256-1ah1YPYK9qlN+Xl4rGtqVTEczQpOtaW42TgAKEbzG6c=",
+        "lastModified": 1792641872,
+        "narHash": "sha256-cz9V3iNxWCrM/59nd3/WWyboLoYlw+Jn2S5FkZss9SQ=",
         "owner": "reze-dev",
         "repo": "dynamic-island",
-        "rev": "9b2e566cd612cd1cc3ba740bb49a60d63d8802c5",
+        "rev": "db84572c9a7dd44fcf9e7d4e98f092912e079a22",
         "type": "github"
       },
       "original": {
@@ -169,11 +169,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1792210252,
-        "narHash": "sha256-Mh0PUaIv4nFY+8wAGonaEh8iBzwsmdNlwjVHmFg1Biw=",
+        "lastModified": 1792502884,
+        "narHash": "sha256-IoNisKcGbUjdd45qCqywGMCYmZ5EnkxezvLII0FWwNA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "09063bd1f2b36fd9fd793c36dfade7bd40a93dfc",
+        "rev": "02c087f3fe673c9e317f206a627cb6b910336dbe",
         "type": "github"
       },
       "original": {
@@ -220,11 +220,11 @@
     "sddm-pixel": {
       "flake": false,
       "locked": {
-        "lastModified": 1774250945,
-        "narHash": "sha256-bzA6WUZrXgQDJvOuK5JIcnPJNRhU/8AiKg3jgAeeoBM=",
+        "lastModified": 1792603877,
+        "narHash": "sha256-OizBZA6svsnT9S/WvOM21ExzeVFEtvqJFCdNrwwMK3Y=",
         "owner": "mahaveergurjar",
         "repo": "sddm",
-        "rev": "1f9507abfa8887d9816a69282bb7d78cd6458c1e",
+        "rev": "8dcfe61cae5c604783cbfe9c8be46fc23f679ea7",
         "type": "github"
       },
       "original": {

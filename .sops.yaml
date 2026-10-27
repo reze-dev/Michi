@@ -1,0 +1,10 @@
+# sops-nix recipients. The matching private age key lives at
+# ~/.config/sops/age/keys.txt and must never be committed.
+#
+# To re-encrypt after editing:
+#   sops secrets/secrets.yaml
+# To add another recipient (for example a backup key), add its public age key
+# to this list and run:
+#   sops updatekeys secrets/secrets.yaml
+creation_rules:
+  - age: age1u06fakfutf9pcp8np2ltalm0mf26jzt5kqrwqedtl9nnllulzs5q7n5z6j

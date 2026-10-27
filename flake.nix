@@ -26,6 +26,11 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Secrets are encrypted in ./secrets and decrypted by the Home Manager
+    # module with an age key kept outside the repository.
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     # SDDM theme (pixel branch)
     sddm-pixel = {
       url = "github:mahaveergurjar/sddm/pixel";
@@ -33,10 +38,13 @@
     };
   };
 
-  outputs =
-    inputs@{ flake-parts, import-tree, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" ];
+  outputs = inputs @ {
+    flake-parts,
+    import-tree,
+    ...
+  }:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux"];
 
       # Automatically imports every .nix file under ./modules as a flake-parts module
       imports = [

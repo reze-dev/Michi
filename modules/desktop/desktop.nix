@@ -40,7 +40,7 @@
         wl-clipboard
         brightnessctl
         playerctl
-        pactl
+        pulseaudio
         grim
         satty
         # Media player. `playerctl` above is what exposes MPRIS metadata to

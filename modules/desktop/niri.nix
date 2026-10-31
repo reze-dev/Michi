@@ -112,6 +112,11 @@
                 spawn = [ (lib.getExe pkgs.kitty) ];
               };
 
+              # File manager (kept — direct access)
+              "Mod+E" = {
+                spawn = [ (lib.getExe pkgs.nautilus) ];
+              };
+
               # Shell modules
               "Mod+D" = {
                 spawn = [ "serpantinum" "msg" "toggle" "launcher" ];

@@ -98,24 +98,15 @@
           }
 
           # ─── Autostart ──────────────────────────────────────────────────────
-          {
-            spawn-at-startup = [
-              "gnome-keyring-daemon"
-              "--start"
-              "--components=secrets,pkcs11"
-              "bash -c wl-paste --type text --watch cliphist store"
-              "bash -c wl-paste --type image --watch cliphist store"
-              "systemctl --user enable --now easyeffects"
-              "serpantinumd start"
-            ];
-          }
+          { spawn-at-startup = [ "gnome-keyring-daemon" "--start" "--components=secrets,pkcs11" ]; }
+          { spawn-at-startup = [ "bash" "-c" "wl-paste --type text --watch cliphist store" ]; }
+          { spawn-at-startup = [ "bash" "-c" "wl-paste --type image --watch cliphist store" ]; }
+          { spawn-at-startup = [ "systemctl" "--user" "enable" "--now" "easyeffects" ]; }
+          { spawn-at-startup = [ "serpantinumd" "start" ]; }
 
           # ─── Keybind overrides ──────────────────────────────────────────────
           {
-            # The island's binds come first so that a key of the same name
-            # here would win: Mod+1..9 is workspace switching in niri, so
-            # the island uses Mod+Ctrl+1..9, which is free.
-            binds = inputs.isle.lib.keybinds.niriBinds // {
+            binds = {
               "Mod+Return" = {
                 spawn = [ (lib.getExe pkgs.kitty) ];
               };

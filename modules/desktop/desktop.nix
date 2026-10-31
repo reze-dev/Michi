@@ -40,6 +40,9 @@
         wl-clipboard
         brightnessctl
         playerctl
+        pactl
+        grim
+        satty
         # Media player. `playerctl` above is what exposes MPRIS metadata to
         # keybinders and status bars; mpv itself is the player.
         mpv

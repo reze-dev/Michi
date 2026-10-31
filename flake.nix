@@ -16,9 +16,7 @@
     nvf.url = "github:notashelf/nvf";
     nvf.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Helium is not in nixpkgs yet (the PR adding it as a chromium variant has
-    # not landed). This is an unofficial package, but it tracks upstream
-    # releases closely, so it is tracked unlocked rather than pinned.
+    # Helium is not in nixpkgs this flake provides helium browser
     helium.url = "github:tomsch/helium-nix";
 
     # Home Manager, used as a NixOS module (home-manager.nixosModules.default)
@@ -26,10 +24,8 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    # The Dynamic Island Shell: the island, its daemon, and the keybinds.
-    # A separate project with its own release cycle, so it is tracked as an
-    # input rather than vendored in.
-    isle.url = "github:reze-dev/dynamic-island";
+    # The serpantinum shell a quickshell layer for wayland compositors and supports niri.
+    serpantinum.url = "github:ilyamiro/serpantinum";
 
     # SDDM theme (pixel branch)
     sddm-pixel = {

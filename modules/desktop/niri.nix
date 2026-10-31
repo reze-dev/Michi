@@ -1,4 +1,4 @@
-{ inputs, self, ... }:
+{ inputs, ... }:
 {
   # ─── Compositor (System-level half) ──────────────────────────────────────
   # Registers the niri session with the display manager and sets up
@@ -83,7 +83,7 @@
             window-rule = {
               match._props.is-focused = false;
               opacity = 0.9;
-              background-effect.blur = true;
+              background-effect.blur = false;
               draw-border-with-background = false;
             };
           }
@@ -103,11 +103,12 @@
               "gnome-keyring-daemon"
               "--start"
               "--components=secrets,pkcs11"
+              "bash -c wl-paste --type text --watch cliphist store"
+              "bash -c wl-paste --type image --watch cliphist store"
+              "systemctl --user enable --now easyeffects"
+              "serpantinumd start"
             ];
           }
-          # mako and the plain awww daemon are both gone. The island owns
-          # org.freedesktop.Notifications now, and it starts its own awww
-          # daemon in the `isle` namespace, so there is exactly one of each.
 
           # ─── Keybind overrides ──────────────────────────────────────────────
           {

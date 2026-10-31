@@ -26,6 +26,10 @@
 
     # The serpantinum shell a quickshell layer for wayland compositors and supports niri.
     serpantinum.url = "github:ilyamiro/serpantinum";
+    # Secrets are encrypted in ./secrets and decrypted by the Home Manager
+    # module with an age key kept outside the repository.
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     # SDDM theme (pixel branch)
     sddm-pixel = {
@@ -35,7 +39,11 @@
   };
 
   outputs =
-    inputs@{ flake-parts, import-tree, ... }:
+    inputs@{
+      flake-parts,
+      import-tree,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
 

@@ -77,7 +77,11 @@
         # This is what the old `useUserPkgs` (PATH prepending) was renamed to.
         useUserPackages = true;
         users.reze = {
-          imports = builtins.attrValues self.homeModules;
+          imports = builtins.attrValues self.homeModules ++ [
+            # Gives Home Manager's nix-index Fish hook the prebuilt database,
+            # matching the wrapper already configured by the NixOS module.
+            nix-index-database.homeModules.default
+          ];
         };
       };
 

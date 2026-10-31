@@ -39,11 +39,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1792666760,
-        "narHash": "sha256-KwzUYn9JDNHzAybXUnc8yvVl/k6R7POucChy/J6s9nw=",
+        "lastModified": 1793397160,
+        "narHash": "sha256-c2BnUMQyL7AeMWVEE4eCrATGf3B4vawEtGq94zkSUU0=",
         "owner": "tomsch",
         "repo": "helium-nix",
-        "rev": "46aab6fbeaea3d6f6a53bfd7dbd3004ed280810a",
+        "rev": "9ffee6eeca0133673c2a33a534bf84028c8f09ca",
         "type": "github"
       },
       "original": {
@@ -84,24 +84,6 @@
       "original": {
         "owner": "vic",
         "repo": "import-tree",
-        "type": "github"
-      }
-    },
-    "isle": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1792641872,
-        "narHash": "sha256-cz9V3iNxWCrM/59nd3/WWyboLoYlw+Jn2S5FkZss9SQ=",
-        "owner": "reze-dev",
-        "repo": "dynamic-island",
-        "rev": "db84572c9a7dd44fcf9e7d4e98f092912e079a22",
-        "type": "github"
-      },
-      "original": {
-        "owner": "reze-dev",
-        "repo": "dynamic-island",
         "type": "github"
       }
     },
@@ -153,15 +135,31 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1793110635,
-        "narHash": "sha256-dhoW6VgFWlaodSY5jrBn+CF2FLmaUvDVgM7+C7T2+NM=",
+        "lastModified": 1793341285,
+        "narHash": "sha256-Y1CiZ4SoBUjLQyQM/pY+rS2dXD3CHLPstF0lmOc73D4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "31ecbaca1bdefa45dffc409f0250bd8039ea0010",
+        "rev": "1c89083e451e891152365b799595cf7790a43325",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1793341285,
+        "narHash": "sha256-Y1CiZ4SoBUjLQyQM/pY+rS2dXD3CHLPstF0lmOc73D4=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "1c89083e451e891152365b799595cf7790a43325",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
@@ -176,11 +174,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793047357,
-        "narHash": "sha256-eY8aBTGSgtx+25254i22jyjbj+JQkEIfb+JyQ2Exnuk=",
+        "lastModified": 1793152231,
+        "narHash": "sha256-hH7rK3yF7lMdrJYqF9cZbGheq8qNPgCYJDsfJovh7UY=",
         "owner": "notashelf",
         "repo": "nvf",
-        "rev": "60b4593979c39e9a1227c9913bd835bb1a59054b",
+        "rev": "0ae8788d14334c9dd4bcd68d951bee661b00ad87",
         "type": "github"
       },
       "original": {
@@ -195,10 +193,10 @@
         "helium": "helium",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
-        "isle": "isle",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_2",
         "nvf": "nvf",
         "sddm-pixel": "sddm-pixel",
+        "serpantinum": "serpantinum",
         "sops-nix": "sops-nix"
       }
     },
@@ -216,6 +214,58 @@
         "owner": "mahaveergurjar",
         "ref": "pixel",
         "repo": "sddm",
+        "type": "github"
+      }
+    },
+    "serpantinum": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3",
+        "serpantinum-wallpapers": "serpantinum-wallpapers",
+        "ski": "ski"
+      },
+      "locked": {
+        "lastModified": 1793403310,
+        "narHash": "sha256-QjlWA8YKqYjEnMZhTze7+RKHK0aiU63btqOrKLqQLfY=",
+        "owner": "ilyamiro",
+        "repo": "serpantinum",
+        "rev": "4caf15d3cc7fd670432ad19ce58a3fdfd1ea0737",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ilyamiro",
+        "repo": "serpantinum",
+        "type": "github"
+      }
+    },
+    "serpantinum-wallpapers": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793124384,
+        "narHash": "sha256-ffCXeC8Yd8kltn14qwq8yIJW4LoocE/2PRma4+IY3Fw=",
+        "owner": "ilyamiro",
+        "repo": "shell-wallpapers",
+        "rev": "c9baa81ce63e27582934a002f7286437db9c5708",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ilyamiro",
+        "repo": "shell-wallpapers",
+        "type": "github"
+      }
+    },
+    "ski": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793389476,
+        "narHash": "sha256-HpjePL+1RraKHkolYwwW91jhYRZ2wpVSxIjDMaPtkfM=",
+        "owner": "ilyamiro",
+        "repo": "Ski",
+        "rev": "20979e0b7a70ac26066844338188ee9f8acd1e14",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ilyamiro",
+        "repo": "Ski",
         "type": "github"
       }
     },

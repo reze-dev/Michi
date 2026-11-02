@@ -46,6 +46,7 @@
         "$HOME/.local/bin"
         "$HOME/go/bin"
         "$HOME/.local/share/coursier/bin"
+        "$HOME/.config/emacs/bin"
       ];
 
       # ─── Colourised man pages ────────────────────────────────────────────────

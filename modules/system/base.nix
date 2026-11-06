@@ -86,6 +86,7 @@
       };
 
       environment.systemPackages = with pkgs; [
+        btop
         wget
         git
         openconnect

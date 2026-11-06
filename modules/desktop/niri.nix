@@ -98,11 +98,42 @@
           }
 
           # ─── Autostart ──────────────────────────────────────────────────────
-          { spawn-at-startup = [ "gnome-keyring-daemon" "--start" "--components=secrets,pkcs11" ]; }
-          { spawn-at-startup = [ "bash" "-c" "wl-paste --type text --watch cliphist store" ]; }
-          { spawn-at-startup = [ "bash" "-c" "wl-paste --type image --watch cliphist store" ]; }
-          { spawn-at-startup = [ "systemctl" "--user" "enable" "--now" "easyeffects" ]; }
-          { spawn-at-startup = [ "serpantinumd" "start" ]; }
+          {
+            spawn-at-startup = [
+              "gnome-keyring-daemon"
+              "--start"
+              "--components=secrets,pkcs11"
+            ];
+          }
+          {
+            spawn-at-startup = [
+              "bash"
+              "-c"
+              "wl-paste --type text --watch cliphist store"
+            ];
+          }
+          {
+            spawn-at-startup = [
+              "bash"
+              "-c"
+              "wl-paste --type image --watch cliphist store"
+            ];
+          }
+          {
+            spawn-at-startup = [
+              "systemctl"
+              "--user"
+              "enable"
+              "--now"
+              "easyeffects"
+            ];
+          }
+          {
+            spawn-at-startup = [
+              "serpantinumd"
+              "start"
+            ];
+          }
 
           # ─── Keybind overrides ──────────────────────────────────────────────
           {
@@ -116,121 +147,303 @@
               "Mod+E" = {
                 spawn = [ (lib.getExe pkgs.nautilus) ];
               };
-
               # Shell modules
               "Mod+D" = {
-                spawn = [ "serpantinum" "msg" "toggle" "launcher" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "launcher"
+                ];
               };
               "Mod+B" = {
-                spawn = [ "serpantinum" "msg" "toggle" "system" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "system"
+                ];
               };
               "Mod+C" = {
-                spawn = [ "serpantinum" "msg" "toggle" "clipboard" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "clipboard"
+                ];
               };
               "Mod+M" = {
-                spawn = [ "serpantinum" "msg" "toggle" "music" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "music"
+                ];
               };
               "Mod+W" = {
-                spawn = [ "serpantinum" "msg" "toggle" "wallpaper" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "wallpaper"
+                ];
               };
               "Mod+S" = {
-                spawn = [ "serpantinum" "msg" "toggle" "calendar" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "calendar"
+                ];
               };
               "Mod+N" = {
-                spawn = [ "serpantinum" "msg" "toggle" "network" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "network"
+                ];
               };
               "Mod+V" = {
-                spawn = [ "serpantinum" "msg" "toggle" "volume" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "volume"
+                ];
               };
               "Mod+H" = {
-                spawn = [ "serpantinum" "msg" "toggle" "settings" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "settings"
+                ];
               };
               "Mod+A" = {
-                spawn = [ "serpantinum" "msg" "toggle" "autohide" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "toggle"
+                  "autohide"
+                ];
               };
 
               # Workspace routing (through serpantinum)
               "Mod+1" = {
-                spawn = [ "serpantinum" "msg" "workspace" "1" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "1"
+                ];
               };
               "Mod+2" = {
-                spawn = [ "serpantinum" "msg" "workspace" "2" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "2"
+                ];
               };
               "Mod+3" = {
-                spawn = [ "serpantinum" "msg" "workspace" "3" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "3"
+                ];
               };
               "Mod+4" = {
-                spawn = [ "serpantinum" "msg" "workspace" "4" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "4"
+                ];
               };
               "Mod+5" = {
-                spawn = [ "serpantinum" "msg" "workspace" "5" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "5"
+                ];
               };
               "Mod+6" = {
-                spawn = [ "serpantinum" "msg" "workspace" "6" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "6"
+                ];
               };
               "Mod+7" = {
-                spawn = [ "serpantinum" "msg" "workspace" "7" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "7"
+                ];
               };
               "Mod+8" = {
-                spawn = [ "serpantinum" "msg" "workspace" "8" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "8"
+                ];
               };
               "Mod+9" = {
-                spawn = [ "serpantinum" "msg" "workspace" "9" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "9"
+                ];
               };
               "Mod+Shift+1" = {
-                spawn = [ "serpantinum" "msg" "workspace" "1" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "1"
+                  "move"
+                ];
               };
               "Mod+Shift+2" = {
-                spawn = [ "serpantinum" "msg" "workspace" "2" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "2"
+                  "move"
+                ];
               };
               "Mod+Shift+3" = {
-                spawn = [ "serpantinum" "msg" "workspace" "3" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "3"
+                  "move"
+                ];
               };
               "Mod+Shift+4" = {
-                spawn = [ "serpantinum" "msg" "workspace" "4" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "4"
+                  "move"
+                ];
               };
               "Mod+Shift+5" = {
-                spawn = [ "serpantinum" "msg" "workspace" "5" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "5"
+                  "move"
+                ];
               };
               "Mod+Shift+6" = {
-                spawn = [ "serpantinum" "msg" "workspace" "6" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "6"
+                  "move"
+                ];
               };
               "Mod+Shift+7" = {
-                spawn = [ "serpantinum" "msg" "workspace" "7" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "7"
+                  "move"
+                ];
               };
               "Mod+Shift+8" = {
-                spawn = [ "serpantinum" "msg" "workspace" "8" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "8"
+                  "move"
+                ];
               };
               "Mod+Shift+9" = {
-                spawn = [ "serpantinum" "msg" "workspace" "9" "move" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "workspace"
+                  "9"
+                  "move"
+                ];
               };
 
               # Utilities
               "Mod+L" = {
-                spawn = [ "serpantinum" "lock" ];
+                spawn = [
+                  "serpantinum"
+                  "lock"
+                ];
               };
               "Mod+R" = {
-                spawn = [ "serpantinum" "reload" ];
+                spawn = [
+                  "serpantinum"
+                  "reload"
+                ];
               };
               "Print" = {
-                spawn = [ "serpantinum" "screenshot" ];
+                spawn = [
+                  "serpantinum"
+                  "screenshot"
+                ];
               };
 
               # Brightness / volume keys
               "XF86MonBrightnessDown" = {
-                spawn = [ "serpantinum" "msg" "brightness" "lower" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "brightness"
+                  "lower"
+                ];
               };
               "XF86MonBrightnessUp" = {
-                spawn = [ "serpantinum" "msg" "brightness" "upper" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "brightness"
+                  "upper"
+                ];
               };
               "XF86AudioLowerVolume" = {
-                spawn = [ "serpantinum" "msg" "volume" "lower" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "volume"
+                  "lower"
+                ];
               };
               "XF86AudioRaiseVolume" = {
-                spawn = [ "serpantinum" "msg" "volume" "raise" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "volume"
+                  "raise"
+                ];
               };
               "XF86AudioMute" = {
-                spawn = [ "serpantinum" "msg" "volume" "mute" ];
+                spawn = [
+                  "serpantinum"
+                  "msg"
+                  "volume"
+                  "mute"
+                ];
               };
             };
           }

@@ -90,7 +90,7 @@
         wget
         git
         openconnect
-        treefmt
+        nixfmt-tree
       ];
 
       # Set system-wide rather than only in home-manager's session variables, so

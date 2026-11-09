@@ -24,9 +24,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # The serpantinum shell a quickshell layer for wayland compositors and supports niri.
-    serpantinum.url = "github:ilyamiro/serpantinum";
-
     # Secrets are encrypted in ./secrets and decrypted by the Home Manager
     sops-nix = {
       url = "github:Mic92/sops-nix";

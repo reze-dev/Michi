@@ -4,7 +4,7 @@
     imports = [
       inputs.serpantinum.nixosModules.default
     ];
-    programs.serpantinum.enable = true;
+    programs.serpantinum.enable = false;
   };
 
   flake.homeModules.serpantinum = {
@@ -12,8 +12,8 @@
       inputs.serpantinum.homeManagerModules.default
     ];
     programs.serpantinum = {
-      enable = true;
-      systemd.enable = true;
+      enable = false;
+      systemd.enable = false;
 
       settings = {
         general = {

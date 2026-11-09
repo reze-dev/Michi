@@ -194,11 +194,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794049908,
-        "narHash": "sha256-K1rzAlksFZWJ0JQfB9kIEFIp9N+pzZs9881Va5LmytY=",
+        "lastModified": 1794159704,
+        "narHash": "sha256-2xkGsyT1C6+z9fx72VeRdmExCIOibm4q0Rk7mfKBCj0=",
         "owner": "notashelf",
         "repo": "nvf",
-        "rev": "d36cd373c5636f9a97c228ffaaec857383d88cbc",
+        "rev": "c5a635adcd638bc1d5bc31098a2ba4b89bfe787b",
         "type": "github"
       },
       "original": {
@@ -245,11 +245,11 @@
         "ski": "ski"
       },
       "locked": {
-        "lastModified": 1794144806,
-        "narHash": "sha256-yPbFIFxwWYucXLZutkm5DMK9eC/NevEBND1SolmXy2Q=",
+        "lastModified": 1794209600,
+        "narHash": "sha256-f7c0Xn5mOW+iAZ6G5v2u4AgoByet4z3mXHUr3dBeF1M=",
         "owner": "ilyamiro",
         "repo": "serpantinum",
-        "rev": "4e6f2fbd27ba96ca58f8ce42d4c0c7c49f44727e",
+        "rev": "51a4a20dcc0566696d2a2a05764d41fcda2148c6",
         "type": "github"
       },
       "original": {

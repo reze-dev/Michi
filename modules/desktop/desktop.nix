@@ -1,49 +1,24 @@
-{ inputs, self, ... }:
+{ inputs, ... }:
 {
-  perSystem =
-    { pkgs, ... }:
-    {
-      packages.sddm-ronin-theme = pkgs.stdenvNoCC.mkDerivation {
-        pname = "sddm-ronin-theme";
-        version = "unstable";
-        src = inputs.sddm-ronin;
-        dontBuild = true;
-        postPatch = ''
-          # SDDM defaults to Qt 5 when QtVersion is absent from the metadata.
-          # The system greeter uses Qt 6; its legacy effects live in Qt5Compat.
-          echo 'QtVersion=6' >> metadata.desktop
-          substituteInPlace Main.qml BlurredCard.qml \
-            --replace-fail 'import QtGraphicalEffects 1.15' 'import Qt5Compat.GraphicalEffects'
-          # No SddmComponents types are used; its ComboBox shadows Controls.
-          substituteInPlace Main.qml \
-            --replace-fail 'import SddmComponents 2.0' ""
-        '';
-        installPhase = ''
-          mkdir -p $out/share/sddm/themes/ronin
-          cp -r * $out/share/sddm/themes/ronin/
-        '';
-      };
-    };
-
   flake.nixosModules.desktop =
     { pkgs, ... }:
-    let
-      roninTheme = self.packages.${pkgs.stdenv.hostPlatform.system}.sddm-ronin-theme;
-    in
     {
       # ─── Display manager ─────────────────────────────────────────────────────
       # Niri is the only session, so the greeter has nothing to choose between.
       services.displayManager.sddm = {
         enable = true;
         wayland.enable = true;
-        theme = "ronin";
+        package = pkgs.kdePackages.sddm;
+        theme = "pixie";
         extraPackages = [
+          pkgs.kdePackages.qtsvg
+          pkgs.kdePackages.qtdeclarative
           pkgs.kdePackages.qt5compat
         ];
       };
 
       environment.systemPackages = with pkgs; [
-        roninTheme
+        inputs.pixie-sddm.packages.${pkgs.stdenv.hostPlatform.system}.default
         # kitty and tmux are intentionally absent: kitty is owned by
         # programs.kitty in kitty.nix, and tmux by home.packages in base.nix.
         fuzzel

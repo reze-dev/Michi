@@ -36,10 +36,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # SDDM theme (ronin branch)
-    sddm-ronin = {
-      url = "github:mahaveergurjar/sddm/ronin";
-      flake = false;
+    # Pixie SDDM theme, using its upstream flake package.
+    pixie-sddm = {
+      url = "github:xCaptaiN09/pixie-sddm";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

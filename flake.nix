@@ -37,8 +37,8 @@
     };
 
     # SDDM theme (pixel branch)
-    sddm-pixel = {
-      url = "github:mahaveergurjar/sddm/pixel";
+    sddm-ronin = {
+      url = "github:mahaveergurjar/sddm/ronin";
       flake = false;
     };
   };

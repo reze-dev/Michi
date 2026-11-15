@@ -4,13 +4,13 @@
     { pkgs, ... }:
     {
       packages.sddm-pixel-theme = pkgs.stdenvNoCC.mkDerivation {
-        pname = "sddm-pixel-theme";
+        pname = "sddm-ronin-theme";
         version = "unstable";
-        src = inputs.sddm-pixel;
+        src = inputs.sddm-ronin;
         dontBuild = true;
         installPhase = ''
-          mkdir -p $out/share/sddm/themes/pixel
-          cp -r * $out/share/sddm/themes/pixel/
+          mkdir -p $out/share/sddm/themes/ronin
+          cp -r * $out/share/sddm/themes/ronin/
         '';
       };
     };
@@ -18,7 +18,7 @@
   flake.nixosModules.desktop =
     { pkgs, ... }:
     let
-      pixelTheme = self.packages.${pkgs.stdenv.hostPlatform.system}.sddm-pixel-theme;
+      roninTheme = self.packages.${pkgs.stdenv.hostPlatform.system}.sddm-ronin-theme;
     in
     {
       # ─── Display manager ─────────────────────────────────────────────────────
@@ -26,14 +26,14 @@
       services.displayManager.sddm = {
         enable = true;
         wayland.enable = true;
-        theme = "pixel";
+        theme = "ronin";
         extraPackages = [
           pkgs.kdePackages.qt5compat
         ];
       };
 
       environment.systemPackages = with pkgs; [
-        pixelTheme
+        roninTheme
         # kitty and tmux are intentionally absent: kitty is owned by
         # programs.kitty in kitty.nix, and tmux by home.packages in base.nix.
         fuzzel

@@ -8,6 +8,16 @@
         version = "unstable";
         src = inputs.sddm-ronin;
         dontBuild = true;
+        postPatch = ''
+          # SDDM defaults to Qt 5 when QtVersion is absent from the metadata.
+          # The system greeter uses Qt 6; its legacy effects live in Qt5Compat.
+          echo 'QtVersion=6' >> metadata.desktop
+          substituteInPlace Main.qml BlurredCard.qml \
+            --replace-fail 'import QtGraphicalEffects 1.15' 'import Qt5Compat.GraphicalEffects'
+          # No SddmComponents types are used; its ComboBox shadows Controls.
+          substituteInPlace Main.qml \
+            --replace-fail 'import SddmComponents 2.0' ""
+        '';
         installPhase = ''
           mkdir -p $out/share/sddm/themes/ronin
           cp -r * $out/share/sddm/themes/ronin/

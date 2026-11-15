@@ -36,7 +36,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # SDDM theme (pixel branch)
+    # SDDM theme (ronin branch)
     sddm-ronin = {
       url = "github:mahaveergurjar/sddm/ronin";
       flake = false;

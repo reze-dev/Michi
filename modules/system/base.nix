@@ -28,7 +28,7 @@
             enable = true;
             efiSupport = true;
             device = "nodev";
-            extraEntries.fedora = ''
+            extraEntries = ''
               menuentry "Fedora Linux" {
               insmod part_gpt
               insmod fat

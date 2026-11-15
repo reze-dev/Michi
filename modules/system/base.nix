@@ -22,17 +22,26 @@
         auto-optimise-store = true;
       };
 
-      boot.loader.grub = {
-        enable = true;
-        efiSupport = true;
-        device = "nodev";
-        # NixOS is the only system on this machine, so there is nothing to probe
-        # for. Leaving this on made every rebuild re-scan every partition (adding
-        # ~20s) and kept resurrecting a stale entry for the old install.
-        useOSProber = false;
+      boot = {
+        loader = {
+          grub = {
+            enable = true;
+            efiSupport = true;
+            device = "nodev";
+            extraEntries.fedora = ''
+              menuentry "Fedora Linux"
+              insmod part_gpt
+              insmod fat
+              search --no-floppy --fs-uuid --set=root 10D1-536A
+              chainloader /EFI/fedora/shimx64.efi
+            '';
+          };
+          efi = {
+            canTouchEfiVariables = true;
+          };
+        };
+        kernelPackages = pkgs.linuxPackages_latest;
       };
-      boot.loader.efi.canTouchEfiVariables = true;
-      boot.kernelPackages = pkgs.linuxPackages_latest;
 
       networking.networkmanager.enable = true;
 

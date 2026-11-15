@@ -137,7 +137,7 @@
           {
             binds = {
               # Terminal (your kitty — kept)
-              "Mod+Return" = {
+              "Mod+T" = {
                 spawn = [ (lib.getExe pkgs.kitty) ];
               };
 

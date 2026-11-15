@@ -3,7 +3,7 @@
   perSystem =
     { pkgs, ... }:
     {
-      packages.sddm-pixel-theme = pkgs.stdenvNoCC.mkDerivation {
+      packages.sddm-ronin-theme = pkgs.stdenvNoCC.mkDerivation {
         pname = "sddm-ronin-theme";
         version = "unstable";
         src = inputs.sddm-ronin;

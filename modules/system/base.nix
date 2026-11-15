@@ -29,11 +29,12 @@
             efiSupport = true;
             device = "nodev";
             extraEntries.fedora = ''
-              menuentry "Fedora Linux"
+              menuentry "Fedora Linux" {
               insmod part_gpt
               insmod fat
               search --no-floppy --fs-uuid --set=root 10D1-536A
               chainloader /EFI/fedora/shimx64.efi
+              }
             '';
           };
           efi = {
